@@ -1,0 +1,302 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大文件上传</title>
+  <style>
+    #progress {
+      height: 20px;
+      width: 300px;
+      margin-bottom: 30px;
+    }
+
+    #progress span {
+      display: block;
+      height: 20px;
+      width: 0;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .red {
+      background-color: reds;
+    }
+
+    .green {
+      background-color: skyblue;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>大文件上传</h1>
+  <div>
+    <h4>选择文件</h4>
+    <input type="file" id="upfile"><br />
+    <div id="progress">
+      <span class="red"></span>
+    </div>
+    <button id="submit">上传</button>
+  </div>
+</body>
+
+</html>
+<script>
+  //大文件分片为2m进行上传，发送服务器同时携带一个标志(hash?)，暂停当前使用的时间戳
+  //服务端生成临时文件，服务端接收一个文件结束的标志，将所有的文件合并为一个文件，清理临时文件
+  function submitUpload() {
+    var chunkSize = 2 * 1024 * 1024//2m
+    var progressSpan = document.getElementById('progress')
+    var file = document.getElementById('upfile')
+    var chunks = []
+    //时间戳
+    token = (+new Date())
+    name = file.name, chunkCount = 0, sendChunkCount = 0
+
+    progressSpan.style.width = '0'
+    progressSpan.classList.remove('green')
+
+    if (!file) {
+      alert('请选择文件')
+      return
+    }
+
+    //拆分文件
+    if (file.size > chunkSize) {
+      //拆分文件
+      var start = 0, end = 0
+      while (true) {
+        end += chunkSizevar
+        var blob = file.slice(start, end)
+        console.log()
+        start += chunkSize
+
+        if (!blob.size) {
+          //拆分结束
+          break
+        }
+        chunk.push(blob)
+      }
+    } else {
+      chunks.push(file.slice(0))
+    }
+
+    chunkCount = chunks.length
+
+    //没有做并发控制，大文件并发过多，需要做并发控制，如控制四个五个请求发送
+    for (var i = 0; i < chunkCount; i++) {
+      //构造FromData对象，表单数据键值对key/value的构造方式，将数据通过xhrHttpRequest.send()方法发送出去
+      var fd = new FormData()
+      fd.append('token', token)
+      fd.append('f1', chunk[i])
+      fd.append('index', i)
+      xhrSend(fd, function () {
+        sendChunkCount += 1
+        if (sendChunkCount === chunkCount) {
+          console.log("上传完成，发送合并请求")
+
+          var formD = new FormData()
+          formD.append('type', 'merge')
+          formD.append('token', token)
+          formD.append('chunkCount', chunkCount)
+          formD.append('filename', name)
+          xhrSend(formD)
+        }
+      })
+    }
+  }
+
+  function xhrSend(fd, cd) {
+    //创建XMLHttpRequest()对象
+    var xhr = new XMLHttpRequest()
+    xhr.open('POST', 'http://localhost:8000', true)
+
+    xhr.onreadystatechange = function () {
+      console.log('state cahnge', xhr.readyState)
+      if (xhr.readyState == 4) {
+        console.log(xhr.responseText)
+        cb && cb()
+      }
+    }
+
+    //xhr.onporgress = updataProgress
+    //xhr.upload.onprogress = updataProgress
+    function updataProgress(event) {
+      console.log(event)
+      if (event.lengthComputable) {
+        var conpletedPercent = (event.load / event.total * 100).toFixed(2)
+        progressSpan.style.width = completedPercent + '%'
+        progressSpan.innerHtml = completedPercent + '%'
+        //进度条变色
+        if (conpletedPercent > 90) {
+          progressSpan.classList.add('green')
+        }
+        console.log('已上传', com)
+      }
+    }
+    //send写在最后，否则onprogress只会执行一次  
+    xhr.send(fd)
+  }
+  //绑定提交事件
+  document.getElementById('submit').addEventListener('click', submitUpload)
+</script> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>大文件上传</title>
+  <style type="text/css">
+    #progress {
+      height: 20px;
+      width: 300px;
+      margin-bottom: 30px;
+    }
+
+    #progress span {
+      display: block;
+      height: 20px;
+      width: 0;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .red {
+      background-color: red;
+    }
+
+    .green {
+      background-color: green;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>大文文件分片上传 之 xhr formdata </h1>
+  <div>
+
+    选择文件:
+    <input type="file" id="f1" /><br /><br />
+
+
+    <div id="progress">
+      <span class="red"></span>
+    </div>
+
+    <button type="button" id="btn-submit">上 传</button>
+
+  </div>
+</body>
+
+</html>
+<script>
+
+  //思路概括
+  //把大文件分成每2m 一块进行上传，发送到服务器同时携带一个标志 暂时用当前的时间戳 ，
+  //服务端生成临时文件，服务端接受一个文件结束的标志 ，然后将所有的文件进行合并成一个文件，清理临时文件。 返回结果（看情况）
+  function submitUpload() {
+    var chunkSize = 2 * 1024 * 1024;//2m
+    var progressSpan = document.getElementById('progress').firstElementChild;
+    var file = document.getElementById('f1').files[0];
+    var chunks = [],
+      token = (+ new Date()),
+      name = file.name, chunkCount = 0, sendChunkCount = 0;
+
+    progressSpan.style.width = '0';
+    progressSpan.classList.remove('green');
+
+    if (!file) {
+      alert('请选择文件');
+      return;
+    }
+
+    //拆分文件
+    if (file.size > chunkSize) {
+      //拆分文件
+      var start = 0, end = 0;
+      while (true) {
+        end += chunkSize;
+        var blob = file.slice(start, end);
+        console.log()
+        start += chunkSize;
+
+        if (!blob.size) {
+          //拆分结束
+          break;
+        }
+
+        chunks.push(blob);
+      }
+    } else {
+      chunks.push(file.slice(0));
+    }
+
+    console.log(chunks);
+
+    chunkCount = chunks.length;
+
+    //没有做并发限制，较大文件导致并发过多，tcp 链接被占光 ，需要做下并发控制，比如只有4个在请求在发送
+    for (var i = 0; i < chunkCount; i++) {
+      var fd = new FormData();   //构造FormData对象
+      fd.append('token', token);
+      fd.append('f1', chunks[i]);
+      fd.append('index', i);
+      xhrSend(fd, function () {
+        sendChunkCount += 1;
+        if (sendChunkCount === chunkCount) {
+          console.log('上传完成，发送合并请求');
+
+          var formD = new FormData();
+          formD.append('type', 'merge');
+          formD.append('token', token);
+          formD.append('chunkCount', chunkCount);
+          formD.append('filename', name);
+          xhrSend(formD);
+        }
+      });
+    }
+  }
+
+  function xhrSend(fd, cb) {
+
+    var xhr = new XMLHttpRequest();   //创建对象
+    xhr.open('POST', 'http://localhost:8100/', true);
+
+    xhr.onreadystatechange = function () {
+      console.log('state change', xhr.readyState);
+      if (xhr.readyState == 4) {
+        console.log(xhr.responseText);
+        cb && cb();
+      }
+    }
+
+    //xhr.onprogress = updateProgress;
+    //xhr.upload.onprogress = updateProgress;
+    function updateProgress(event) {
+      console.log(event);
+      if (event.lengthComputable) {
+        var completedPercent = (event.loaded / event.total * 100).toFixed(2);
+        progressSpan.style.width = completedPercent + '%';
+        progressSpan.innerHTML = completedPercent + '%';
+        if (completedPercent > 90) {//进度条变色
+          progressSpan.classList.add('green');
+        }
+        console.log('已上传', completedPercent);
+      }
+    }
+    //注意 send 一定要写在最下面，否则 onprogress 只会执行最后一次 也就是100%的时候
+    xhr.send(fd);//发送时  Content-Type默认就是: multipart/form-data; 
+  }
+
+  //绑定提交事件
+  document.getElementById('btn-submit').addEventListener('click', submitUpload);
+
+
+
+</script>
