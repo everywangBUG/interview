@@ -1,7 +1,7 @@
 /**
- * 
+ *
  * @description 两个栈 -> 一个队列
- * return arr
+ * @return arr
  */
 export class Queue {
     private stack1: number[] = []

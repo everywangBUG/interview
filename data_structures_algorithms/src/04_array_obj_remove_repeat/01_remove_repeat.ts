@@ -5,7 +5,7 @@ const arr: object[] = [
   { b: 2, a: 1, c: { b: 2, a: 1 } }
 ]
 const newArr: object[] = [...new Set(arr)]//无法去重
-console.log(newArr)
+console.log(newArr, '无法去重')
 
 /**
  * 
@@ -13,8 +13,7 @@ console.log(newArr)
  * @param: 
  * @return:
  */
-
-function removeSameArray(arr: object[]) {
+export function removeSameArray(arr: object[]) {
   let newArr: object[] = [...arr]
   for (let i = 0; i < newArr.length; i++) {
     for (let j = i + 1; j < newArr.length; j++) {
@@ -26,9 +25,32 @@ function removeSameArray(arr: object[]) {
   }
   return newArr
 }
-//判断参数是否为对象(js)
-const isObject = (val) => typeof val === 'object' && val !== null
-function isEqual(val1: object, val2: object) {
 
+console.log(removeSameArray(arr), '666')
+//判断参数是否为对象(js)
+const isObject = (val: Object) => typeof val === 'object' && val !== null
+
+/**
+ * 判断两个对象是否相同
+ * @param val1
+ * @param val2 
+ */
+export function isEqual(val1: object, val2: object) {
+  if (val1 === val2) return true
+  
+  if (!isObject(val1) || !isObject(val2)) return false
+
+  const keys1 = Object.keys(val1)
+  const keys2 = Object.keys(val2)
+  if (keys1.length !== keys2.length) return false
+
+  for (const key of keys1) {
+    // 如果键值不存在，或者值不相等，则返回false
+    if (!keys2.includes(key) || !Object.is(val1[key], val2[key])) {
+      return false
+    }
+  }
+
+  return true
 }
 
