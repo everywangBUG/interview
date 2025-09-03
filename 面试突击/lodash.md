@@ -57,14 +57,48 @@ compact(arr); // ['a', 'b']
 
 ```javascript
 /**
+ * 数字、字符、布尔值的基本类型与===判断一致，NaN和NaN相等(NaN===NaN为false)，+0和-0相等(Object.is(+0, -0)为false)
+ * @param {*} val1
+ * @param {*} val2
+ */
+function sameValueZero(val1, val2) {
+    if (typeof val1 === 'number' && typeof val2 === 'number') {
+        if (isNaN(val1) && isNaN(val2)) {
+            return true;
+        }
+        if (val1 === 0 && val2 === 0) {
+            return true;
+        }
+    }
+    return val1 === val2;
+}
+
+/**
  * 创建一个唯一值的arr，每个值中不包含给定的第二个参数数组中的值
  * @param {array} arr
  * @param {array} values
  * @return {array} res
  */
 function difference(arr, values) {
-    
+    if (!Array.isArray(values)) {
+        return [...arr];
+    }
+
+    const res = []
+    for (let i = 0; i < arr.length; i++) {
+        let shouldInclude = true;
+        for (let j = 0; j < values.length; j++) {
+            if (sameValueZero(arr[i], values[j])) {
+                shouldInclude = false;
+                break;
+            }
+        }
+        if (shouldInclude) {
+            res.push(arr[i]);
+        }
+    }
+    return res;
 }
-diffrence(difference([3, 1, 2], [4, 2])); // [3, 1]
+difference(difference([3, 1, 2], [4, 2])); // [3, 1]
 ```
 
