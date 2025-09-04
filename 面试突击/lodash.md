@@ -184,9 +184,80 @@ differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x'); // [{ 'x' : 2 }]
 
 #### differenceWith
 
+
 ```javascript
-function differenceWith() {
+/**
+ * 
+ */
+function isEqual(a, b) {
+    // 基本类型的比较
+    if (a === b) return true;
+
+    // 处理NaN
+    if (Number.isNaN(a) && Number.isNaN(b)) return true;
+
+    // 类型不同返回false
+    if (typeof a !== typeof b) return false;
+
+    // 处理null和undefined
+    if (a === null || b === null) return a === b;
+
+    // 处理数组
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length !== b.length) return false;
+        for(let i = 0; i < arr.length; i++) {
+            if (!isEqual(arr[i], b[i])) return false;
+        }
+        return true;
+    }
+
+    // 处理对象
+    if (typeof a === 'object' && typeof b === 'object') {
+        const keysA = Object.keys(a);
+        const keysB = Object.keys(b);
+
+        if (keysA.length !== keysB.length) return false;
+
+        for (const key of keysA) {
+            if (!isEqual(a[key], b[key])) return false;
+        }
+        return true;
+    }
     
+    return false;
 }
+
+/**
+ * 接收一个comparator比较器，调用arr和values的元素，结果从arr中返回
+ * @param {array} arr
+ * @param {array} values
+ * @param {function} comparator
+ * @return res
+ */
+function differenceWith(arr, values, comparator) {
+    if (!Array.isArray(arr)) return [];
+    if (!Array.isArray(values)) return [...arr];
+
+    if (typeof comparator !== 'function') {
+        return difference(arr, values);
+    }
+
+    const res = [];
+    for (let i = 0; i < arr.length; i++) {
+        let shouldInclude = true;
+        for (let j = 0; j < arr.length; j++) {
+            if (comparator(arr[i], values[j])) {
+                shouldInclude = false;
+            }
+        }
+        if (shouldInclude) {
+            res.push(arr[i]);
+        }
+    }
+    return res;
+}
+
+const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+differenceWith(objects, [{ 'x': 1, 'y': 2 }], isEqual); // [{ 'x': 2, 'y': 1 }]
 ```
 
