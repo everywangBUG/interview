@@ -187,6 +187,10 @@ differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x'); // [{ 'x' : 2 }]
 
 ```javascript
 /**
+ * 判断是否相等
+ * @param {*} a
+ * @param {*} b
+ * @return {boolean}
  * 
  */
 function isEqual(a, b) {
@@ -259,5 +263,94 @@ function differenceWith(arr, values, comparator) {
 
 const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
 differenceWith(objects, [{ 'x': 1, 'y': 2 }], isEqual); // [{ 'x': 2, 'y': 1 }]
+```
+
+
+
+#### drop
+
+```javascript
+/**
+ * 创建一个切片数组，去除array的前面n个元素(n的默认值为1)
+ * @param {array} arr
+ * @param {number} n
+ */
+function drop(arr, n = 1) {
+    if (n >= arr.length) {
+        return [];
+    }
+    if (n < 0) {
+        return [...arr]
+    }
+    return arr.slice(n, arr.length);
+    
+    // return arr.slice(n)
+}
+
+drop([1, 2, 3]); // [2, 3]
+drop([1, 2, 3], 2); // [3]
+drop([1, 2, 3], 5); // []
+drop([1, 2, 3], 0); // [1, 2, 3]
+```
+
+
+
+#### dropRight
+
+```javascript
+/**
+ * 创建一个切片数组，去除array尾部的n个元素。（n默认值为1。）
+ * @param {array} arr
+ * @param {number} n
+ */
+function dropRight(arr, n) {
+    if (n) {
+        return arr;
+    }
+    return arr.slice(-n);
+}
+
+dropRight([1, 2, 3]); // [1， 2]
+dropRight([1, 2, 3], 2); // [1]
+dropRight([1, 2, 3], 5); // []
+dropRight([1, 2, 3], 0); // [1, 2, 3]
+```
+
+
+
+#### dropRightWith
+
+```javascript
+/**
+ * 从数组尾部开始，移除所有满足predicate的元素，直到遇到第一个不满足的元素为止，并返回。predicate会传入3个参数： (value, index, array)。
+ * @param {array} arr
+ * @param {Function} predicate
+ */
+function dropRightWhile(arr, predicate) {
+    if (!Array.isArray(arr)) return [];
+
+    predicate = predicate || ((v) => v);
+    
+    // predicate为函数
+    const end = arr.findLastIndex((value, index, array) => {
+        return !predicate(value, index, array);
+    })
+
+    // TODO: predicate为对象
+
+    // TODO: predicate为数组
+
+    return arr.slice(0, end + 1).map(v => v[Object.keys(v)[0]]);
+}
+
+const users = [
+  { 'user': 'barney',  'active': true },
+  { 'user': 'fred',    'active': false },
+  { 'user': 'pebbles', 'active': false }
+];
+dropRightWhile(users, function(o) { return !o.active; }); // ['barney']
+dropRightWhile(users, { 'user': 'pebbles', 'active': false });
+dropRightWhile(users, ['active', false]);
+dropRightWhile(users, 'active');
 ```
 
