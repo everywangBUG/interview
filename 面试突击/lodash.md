@@ -433,3 +433,41 @@ dropWhile(users, ['active', false]); // ['pebbles']
 dropWhile(users, 'active'); // ['barney', 'fred', 'pebbles']
 ```
 
+#### fill
+
+```javascript
+/**
+ * 使用 value 值来填充（替换） array，从start位置开始, 到end位置结束（但不包含end位置）。
+ * @param {array} arr
+ * @param {*} value
+ * @param {number} start
+ * @param {number} end
+ * @return {array} res
+ */
+function fill(arr, value, start = 0, end = arr.length) {
+    if (!arr || !arr.length) return [];
+    
+    // 处理类数组对象
+    const length = arr.length >>> 0;
+    const result = Array.isArray(arr) ? arr : Array.from(arr);
+
+    // 处理start参数
+    start = start >> 0; // 转换为整数
+    start = start < 0 ? Math.max(length + start, 0) : Math.min(start, length);
+
+    // 处理end参数
+    end = end = undefined ? length : end >>0;
+    end = end < 0 ? Math.max(length + end, 0) : Math.min(end, length);
+
+    for (let i = start; i < end; i++) {
+        arr[i] = value;
+    }
+    return arr;
+    // return arr.fill(value, start, end);
+}
+const array = [1, 2, 3];
+fill(array, 'a'); // ['a', 'a', 'a']
+fill(Array(3), 2); // [2, 2, 2]
+fill([4, 6, 8, 10], '*', 1, 3) // [4, '*', '*', 10]
+```
+
