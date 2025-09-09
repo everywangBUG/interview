@@ -318,7 +318,7 @@ dropRight([1, 2, 3], 0); // [1, 2, 3]
 
 
 
-#### dropRightWith
+#### dropRightWhile
 
 ```javascript
 /**
@@ -383,5 +383,53 @@ dropRightWhile(users, { 'user': 'pebbles', 'active': false }); // ['barney', 'fr
 dropRightWhile(users, function(o) { return !o.active; }); // ['barney']
 dropRightWhile(users, ['active', false]); // ['barney']
 dropRightWhile(users, 'active'); // ['barney', 'fred', 'pebbles']
+```
+
+
+
+#### dropWhile
+
+```javascript
+/**
+ * 从数组头部开始，移除所有满足predicate的元素，直到遇到第一个不满足的元素为止，并返回。predicate会传入3个参数： (value, index, array)。
+ * @param {array} arr
+ * @param {Function} predicate
+ */
+function dropWhile(arr, predicate) {
+   	if (!Array.isArray(arr)) return [];
+    
+    if (predicate === undefined) predicate = (v) => v;
+    
+    if (typeof predicate === 'object' && predicate !== null) {
+        predicate = (obj, index, arr) => {
+        	for (let key in predicate) {
+            	if (obj[key] !== predicate[key]) {
+                    return false;
+                }
+        	}
+            return true;
+        }
+    } else if (Array.isArray(predicate)) {
+        const [key, value] = predicate;
+        predicate = (obj, index, arr) => obj[key] == value;
+    } else if (typeof predicate === 'string') {
+        const prop = predicate;
+        predicate = (obj, index, arr) => obj[prop];
+    }
+    
+    const end = arr.findIndex((value, index, arr) => !predicate(value, index, arr));
+
+	return arr.slice(0, end + 1);
+}
+
+const users = [
+  { 'user': 'barney',  'active': true },
+  { 'user': 'fred',    'active': false },
+  { 'user': 'pebbles', 'active': false }
+];
+dropWhile(users, function(o) { return !o.active; }); // ['pebbles']
+dropWhile(users, { 'user': 'barney', 'active': false }); // ['fred', 'pebbles']
+dropWhile(users, ['active', false]); // ['pebbles']
+dropWhile(users, 'active'); // ['barney', 'fred', 'pebbles']
 ```
 
