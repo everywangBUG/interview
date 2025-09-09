@@ -329,18 +329,49 @@ dropRight([1, 2, 3], 0); // [1, 2, 3]
 function dropRightWhile(arr, predicate) {
     if (!Array.isArray(arr)) return [];
 
-    predicate = predicate || ((v) => v);
+    if (predicate === undefined) predicate = ((v) => v);
     
     // predicate为函数
-    const end = arr.findLastIndex((value, index, array) => {
-        return !predicate(value, index, array);
-    })
+    if (typeof predicate === 'function') {
+        const end = arr.findLastIndex((value, index, array) => {
+            return !predicate(value, index, array);
+    	})
+        return arr.slice(0, end + 1);
+    }
 
-    // TODO: predicate为对象
+    // predicate为对象
+	if (Object.prototype.toString.call(predicate) === '[object Object]') {
+        for (let key in predicate) {
+            const end = arr.findLastIndex((value, index, array) => {
+                for (let k in value) {
+                    return value[k] !== predicate[key];
+                }
+            })
+            return arr.slice(0, end + 1);
+        }
+    }
 
-    // TODO: predicate为数组
-
-    return arr.slice(0, end + 1).map(v => v[Object.keys(v)[0]]);
+    // predicate为数组键值对类型
+    if (Array.isArray(predicate)) {
+        const end = arr.findLastIndex((value, index, array) => {
+            const [predicateKey, predicateValue] = predicate;
+            for (let key in value) {
+                if (key === predicateKey) {
+                    return value[key] !== predicateValue;
+                }
+            }
+        })
+        return arr.slice(0, end + 1);
+    }
+    
+    // predicate为字符串
+    if (typeof predicate === 'string') {
+        predicate = (obj, index, arr) = > obj[predicate];
+        const end = arr.findLastIndex((value, index, array) => {
+            return !predicate(value, index, array)
+        })
+        return arr.slice(0, end + 1);
+    }
 }
 
 const users = [
@@ -348,9 +379,9 @@ const users = [
   { 'user': 'fred',    'active': false },
   { 'user': 'pebbles', 'active': false }
 ];
+dropRightWhile(users, { 'user': 'pebbles', 'active': false }); // ['barney', 'fred']
 dropRightWhile(users, function(o) { return !o.active; }); // ['barney']
-dropRightWhile(users, { 'user': 'pebbles', 'active': false });
-dropRightWhile(users, ['active', false]);
-dropRightWhile(users, 'active');
+dropRightWhile(users, ['active', false]); // ['barney']
+dropRightWhile(users, 'active'); // ['barney', 'fred', 'pebbles']
 ```
 
