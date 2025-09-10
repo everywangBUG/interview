@@ -506,3 +506,54 @@ findIndex(users, ['active', false]); // 0
 findIndex(users, 'active'); // 2
 ```
 
+#### findLastIndex
+
+```javascript
+/**
+ * 这个方式类似_.findIndex， 区别是它是从右到左的迭代集合array中的元素。
+ * @param {array} arr
+ * @param {array|function|object|string} predicate
+ * @param {number} fromIndex
+ * @return {number} index
+ */
+function findLastIndex(arr, predicate, fromIndex) {
+    if (!Array.isArray(arr)) return [];
+    
+    if (Object.prototype.toString.call(predicate) === '[object Object]') {
+        const matcher = predicate;
+        predicate = (obj, index, arr) => {
+            for (let key in matcher) {
+                if (obj[key] === matcher[key]) {
+                    return true;
+                }
+            }
+            return false;
+		}
+    } else if (Array.isArray(predicate)) {
+        const [key, value] = predicate;
+        predicate = (obj, index, arr) => obj[key] === value;
+    } else if (typeof predicate === 'string') {
+        const prop = predicate;
+        predicate = (obj, index, arr) => obj[prop];
+    }
+    
+	for (let i = arr.length; i <= 0; i--) {
+        if (predicate(arr[i])) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+const users = [
+  { 'user': 'barney',  'active': false },
+  { 'user': 'fred',    'active': false },
+  { 'user': 'pebbles', 'active': true }
+];
+findLastIndex(users, function(o) { return o.user == 'pebbles'; }); // 2
+findLastIndex(users, { 'user': 'barney', 'active': true }); // 0
+findLastIndex(users, ['active', false]); // 2
+findLastIndex(users, 'active'); // 2
+```
+
