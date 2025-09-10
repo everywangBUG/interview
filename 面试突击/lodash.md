@@ -30,8 +30,6 @@ chunk(arr, 3);
 chunk(arr, 'number');
 ```
 
-
-
 #### compact
 
 ```javascript
@@ -50,8 +48,6 @@ function compact(arr) {
 const arr = ['a', 'b', false, 0, null, undefined, '', NaN];
 compact(arr); // ['a', 'b']
 ```
-
-
 
 #### difference
 
@@ -101,8 +97,6 @@ function difference(arr, values) {
 }
 difference(difference([3, 1, 2], [4, 2])); // [3, 1]
 ```
-
-
 
 #### differenceBy
 
@@ -179,8 +173,6 @@ function differenceBy(arr, values, iteratee = v => v) {
 differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor); // [3.1, 1.3]
 differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x'); // [{ 'x' : 2 }]
 ```
-
-
 
 #### differenceWith
 
@@ -265,8 +257,6 @@ const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
 differenceWith(objects, [{ 'x': 1, 'y': 2 }], isEqual); // [{ 'x': 2, 'y': 1 }]
 ```
 
-
-
 #### drop
 
 ```javascript
@@ -293,8 +283,6 @@ drop([1, 2, 3], 5); // []
 drop([1, 2, 3], 0); // [1, 2, 3]
 ```
 
-
-
 #### dropRight
 
 ```javascript
@@ -315,8 +303,6 @@ dropRight([1, 2, 3], 2); // [1]
 dropRight([1, 2, 3], 5); // []
 dropRight([1, 2, 3], 0); // [1, 2, 3]
 ```
-
-
 
 #### dropRightWhile
 
@@ -384,8 +370,6 @@ dropRightWhile(users, function(o) { return !o.active; }); // ['barney']
 dropRightWhile(users, ['active', false]); // ['barney']
 dropRightWhile(users, 'active'); // ['barney', 'fred', 'pebbles']
 ```
-
-
 
 #### dropWhile
 
@@ -469,5 +453,56 @@ const array = [1, 2, 3];
 fill(array, 'a'); // ['a', 'a', 'a']
 fill(Array(3), 2); // [2, 2, 2]
 fill([4, 6, 8, 10], '*', 1, 3) // [4, '*', '*', 10]
+```
+
+#### findIndex
+
+```javascript
+/**
+ * 该方法类似_.find，区别是该方法返回第一个通过 predicate 判断为真值的元素的索引值（index），而不是元素本身。
+ * @param {array} arr
+ * @param {array|function|object|string} predicate
+ * @param {number} fromIndex
+ * @return {number} index
+ */
+function findIndex(arr, predicate, fromIndex) {
+    if (!Array.isArray(arr)) return [];
+    
+    if (Object.prototype.toString.call(predicate) === '[object Object]') {
+        const matcher = predicate;
+        predicate = (obj, index, arr) => {
+            for (let key in matcher) {
+                if (obj[key] === matcher[key]) {
+                    return true;
+                }
+            }
+            return false;
+		}
+    } else if (Array.isArray(predicate)) {
+        const [key, value] = predicate;
+        predicate = (obj, index, arr) => obj[key] === value;
+    } else if (typeof predicate === 'string') {
+        const prop = predicate;
+        predicate = (obj, index, arr) => obj[prop];
+    }
+    
+	for (let i = 0; i < arr.length; i++) {
+        if (predicate(arr[i])) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+const users = [
+  { 'user': 'barney',  'active': false },
+  { 'user': 'fred',    'active': false },
+  { 'user': 'pebbles', 'active': true }
+];
+findIndex(users, function(o) { return o.user == 'barney'; }); // 0
+findIndex(users, { 'user': 'fred', 'active': false }); // 1
+findIndex(users, ['active', false]); // 0
+findIndex(users, 'active'); // 2
 ```
 
