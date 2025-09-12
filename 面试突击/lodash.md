@@ -559,3 +559,47 @@ findLastIndex(users, ['active', false]); // 2
 findLastIndex(users, 'active'); // 0
 ```
 
+#### flatten
+
+```javascript
+/**
+ * 减少一级arr的嵌套深度
+ * @param {array} arr
+ * @return {array} res
+ */
+function flatten(arr) {
+    let res = [];
+    for (let i = 0; i < arr.length; i++) {
+        if (!Array.isArray(arr[i])) {
+            res.push(arr[i]);
+        } else {
+            res.push(...arr[i]);
+        }
+    }
+    return res;
+}
+flatten([1, [2, [3, [4]], 5]]); // [1, 2, [3, [4]], 5]
+```
+
+#### flattenDeep
+
+```javascript
+/**
+ * 将array递归为一维数组。
+ * @param {array} arr
+ * @return {array} res
+ */
+function flattenDeep(arr) {
+    let res = [];
+    arr.forEach(item => {
+        if (!Array.isArray(item)) {
+            res.push(item);
+        } else {
+            res = res.concat(flattenDeep(item));
+        }
+    })
+    return res;
+}
+flattenDeep([1, [2, [3, [4]], 5]]);
+```
+
