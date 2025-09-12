@@ -466,7 +466,7 @@ fill([4, 6, 8, 10], '*', 1, 3) // [4, '*', '*', 10]
  * @return {number} index
  */
 function findIndex(arr, predicate, fromIndex) {
-    if (!Array.isArray(arr)) return [];
+    if (!Array.isArray(arr)) return -1;
     
     if (Object.prototype.toString.call(predicate) === '[object Object]') {
         const matcher = predicate;
@@ -516,18 +516,18 @@ findIndex(users, 'active'); // 2
  * @param {number} fromIndex
  * @return {number} index
  */
-function findLastIndex(arr, predicate, fromIndex) {
-    if (!Array.isArray(arr)) return [];
+function findLastIndex(arr, predicate, fromIndex = arr.length - 1) {
+    if (!Array.isArray(arr)) return -1;
     
     if (Object.prototype.toString.call(predicate) === '[object Object]') {
         const matcher = predicate;
         predicate = (obj, index, arr) => {
             for (let key in matcher) {
-                if (obj[key] === matcher[key]) {
-                    return true;
+                if (obj[key] !== matcher[key]) {
+                    return false;
                 }
             }
-            return false;
+            return true;
 		}
     } else if (Array.isArray(predicate)) {
         const [key, value] = predicate;
@@ -537,7 +537,9 @@ function findLastIndex(arr, predicate, fromIndex) {
         predicate = (obj, index, arr) => obj[prop];
     }
     
-	for (let i = arr.length; i <= 0; i--) {
+    const start = fromIndex === undefined ? arr.length - 1 : fromIndex;
+    
+	for (let i = start; i >= 0; i--) {
         if (predicate(arr[i])) {
             return i;
         }
@@ -547,13 +549,13 @@ function findLastIndex(arr, predicate, fromIndex) {
 }
 
 const users = [
-  { 'user': 'barney',  'active': false },
+  { 'user': 'barney',  'active': true },
   { 'user': 'fred',    'active': false },
-  { 'user': 'pebbles', 'active': true }
+  { 'user': 'pebbles', 'active': false }
 ];
 findLastIndex(users, function(o) { return o.user == 'pebbles'; }); // 2
 findLastIndex(users, { 'user': 'barney', 'active': true }); // 0
 findLastIndex(users, ['active', false]); // 2
-findLastIndex(users, 'active'); // 2
+findLastIndex(users, 'active'); // 0
 ```
 
