@@ -603,3 +603,71 @@ function flattenDeep(arr) {
 flattenDeep([1, [2, [3, [4]], 5]]);
 ```
 
+#### flattenDepth
+
+```javascript
+/**
+ * 根据 depth 递归减少 array 的嵌套层级
+ * @param {array} arr
+ * @return {array} res
+ */
+function flattenDepth(arr, depth = 1) {
+    if (!Array.isArray(arr) || depth < 1) {
+        return arr;
+    }
+    let res = [];
+    arr.forEach(item => {
+        if (Array.isArray(item) && depth > 0) {
+            res = res.concat(flattenDepth(item, depth - 1));
+        } else {
+            res.push(item);
+        }
+    })
+    return res;
+}
+const array = [1, [2, [3, [4]], 5]];
+flattenDepth(array, 1); // => [1, 2, [3, [4]], 5]
+flattenDepth(array, 2); // => [1, 2, 3, [4], 5]
+```
+
+#### fromPairs
+
+```javascript
+/**
+ * 返回一个由键值对pairs构成的对象
+ * @param {pairs} arr
+ * @return {object} obj
+ */
+function fromPairs(pairs) {
+    const obj = {};
+    for (let i = 0; i < pairs.length; i++) {
+        const [key, value] = pairs[i];
+        obj[key] = value;
+    }
+    return obj;
+}
+fromPairs([['fred', 30], ['barney', 40], ['pebbles', 50]]); // => { 'fred': 30, 'barney': 40 }
+```
+
+#### indexOf
+
+```javascript
+/**
+ * 使用SameValueZero 等值比较，返回首次 value 在数组array中被找到的 索引值， 如果 fromIndex 为负值，将从数组array尾端索引进行匹配。
+ * @param {pairs} arr
+ * @param {*} value
+ * @param {number} fromIndex
+ * @return {number} num
+ */
+function indexOf(arr, value, fromIndex = 0) {
+    fromIndex < 0 ? fromIndex = arr.length + fromIndex : fromIndex;
+
+    for(let i = 0; i < arr.length; i++) {
+        if (arr[i] === value) {
+            return i;
+        }
+    }
+}
+indexOf([1, 2, 1, 2], 2) // => 1
+indexOf([1, 2, 1, 2], 2, 2); // => 3
+```
