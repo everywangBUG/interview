@@ -671,3 +671,59 @@ function indexOf(arr, value, fromIndex = 0) {
 indexOf([1, 2, 1, 2], 2) // => 1
 indexOf([1, 2, 1, 2], 2, 2); // => 3
 ```
+
+#### join
+
+```javascript
+function join(arr, separator=',') {
+    if (!Array.isArray(arr)) {
+        return '';
+    }
+
+    let res = '';
+    for(let i = 0; i < arr.length; i++) {
+        if (arr[i] === null || arr[i] === undefined) {
+            arr[i] = '';
+        }
+        res += separator + arr[i];
+    }
+    return res;
+}
+join(['a', 'b', undefined, 'c'], '~');
+```
+
+#### pull
+
+```javascript
+/**
+ * 数字、字符、布尔值的基本类型与===判断一致，NaN和NaN相等(NaN===NaN为false)，+0和-0相等(Object.is(+0, -0)为false)
+ * @param {*} val1
+ * @param {*} val2
+ */
+function sameValueZero(val1, val2) {
+    if (typeof val1 === 'number' && typeof val2 === 'number') {
+        if (isNaN(val1) && isNaN(val2)) {
+            return true;
+        }
+        if (val1 === 0 && val2 === 0) {
+            return true;
+        }
+    }
+    return val1 === val2;
+}
+
+/**
+ * 移除数组array中所有和给定值相等的元素，使用SameValueZero 进行全等比较。会改变原数组
+ * @param {array} arr
+ * @param {*} values
+ * @return {number} num
+ */
+function pull(arr, ...args) {
+    for (let i = 0; i < arr.length; i++) {
+
+    }
+}
+
+const array = [1, 2, 3, 1, 2, 3];
+pull(array, 2, 3) // => [1, 1]
+```
