@@ -732,3 +732,81 @@ function pull(arr, ...args) {
 const array = [1, 2, 3, 1, 2, 3];
 pull(array, 2, 3) // => [1, 1]
 ```
+
+#### pullAllBy
+
+```javascript
+/**
+ * 判断是否相等
+ * @param {*} a
+ * @param {*} b
+ * @return {boolean}
+ * 
+ */
+function isEqual(a, b) {
+    // 基本类型的比较
+    if (a === b) return true;
+
+    // 处理NaN
+    if (Number.isNaN(a) && Number.isNaN(b)) return true;
+
+    // 类型不同返回false
+    if (typeof a !== typeof b) return false;
+
+    // 处理null和undefined
+    if (a === null || b === null) return a === b;
+
+    // 处理数组
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length !== b.length) return false;
+        for(let i = 0; i < arr.length; i++) {
+            if (!isEqual(arr[i], b[i])) return false;
+        }
+        return true;
+    }
+
+    // 处理对象
+    if (typeof a === 'object' && typeof b === 'object') {
+        const keysA = Object.keys(a);
+        const keysB = Object.keys(b);
+
+        if (keysA.length !== keysB.length) return false;
+
+        for (const key of keysA) {
+            if (!isEqual(a[key], b[key])) return false;
+        }
+        return true;
+    }
+    
+    return false;
+}
+
+/**
+ * 接受一个 iteratee（迭代函数） 调用 array 和 values的每个值以产生一个值，通过产生的值进行了比较。iteratee 会传入一个参数： (value)。
+ * @param {Array} arr 要修改的数组
+ * @param {Array} values 要移除值的数组
+ * @param {Array|Function|Object|string} iteratee 要移除值的数组
+ * @return {Array} res
+ */
+function pullAllBy(arr, values, iteratee = v => v) {
+    if (typeof iteratee === 'string') {
+        const key = iteratee;
+        iteratee = v => v[key];
+    }
+    
+    // 倒序遍历避免删除索引问题
+    for (let i = arr.length -1; i >= 0; i--) {
+        for (let j = 0; j < values.length; j++) {
+            if (isEqual(iteratee(arr[i]), iteratee(values[j]))) {
+                arr.splice(i, 1);
+				// 匹配到了跳出内层循环
+                break;
+            }
+        }
+    }
+    return arr;
+}
+const array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
+pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x'); // => [{ 'x': 2 }]
+```
+
