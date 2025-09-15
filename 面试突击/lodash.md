@@ -786,7 +786,7 @@ function isEqual(a, b) {
  * @param {Array} arr 要修改的数组
  * @param {Array} values 要移除值的数组
  * @param {Array|Function|Object|string} iteratee 要移除值的数组
- * @return {Array} res
+ * @return {Array} arr
  */
 function pullAllBy(arr, values, iteratee = v => v) {
     if (typeof iteratee === 'string') {
@@ -799,7 +799,7 @@ function pullAllBy(arr, values, iteratee = v => v) {
         for (let j = 0; j < values.length; j++) {
             if (isEqual(iteratee(arr[i]), iteratee(values[j]))) {
                 arr.splice(i, 1);
-				// 匹配到了跳出内层循环
+                // 匹配到了跳出内层循环
                 break;
             }
         }
@@ -810,3 +810,50 @@ const array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
 pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x'); // => [{ 'x': 2 }]
 ```
 
+#### pullAllWith
+
+```javascript
+/**
+ * 接受 comparator 调用array中的元素和values比较。comparator 会传入两个参数：(arrVal, othVal)，改变原数组。
+ * @param {Array} arr 要修改的数组
+ * @param {Array} values 要移除值的数组
+ * @param {Function} comparator comparator（比较器）调用每个元素。
+ * @return {Array} arr
+ */
+function pullAllWith(arr, values, comparator) {
+    for (let i = arr.length - 1; i >= 0; i--) {
+        for (let j = 0; j < values.length; j++) {
+            if (isEqual(arr[i], values[j])) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+    }
+    return arr;
+}
+const arr = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];
+pullAllWith(arr, [{ 'x': 3, 'y': 4 }], isEqual); // => [{ 'x': 1, 'y': 2 }, { 'x': 5, 'y': 6 }]
+```
+
+#### pullAt
+
+```javascript
+/**
+ * 根据索引 indexes，移除array中对应的元素，并返回被移除元素的数组， 改变原数组。
+ * @param {Array} arr 要修改的数组
+ * @param {number|number[]} indexes 要移除值的数组
+ * @return {Array} arr
+ */
+function pullAt(arr, ...indexes) {
+    const indexSet = new Set(indexes)
+    const removed = arr.filter((_, index) => indexSet.has(index));
+    const remaining = arr.filter((_, index) => !indexSet.has(index));
+    arr.length = 0;
+    arr.push(...remaining);
+    return removed;
+}
+const array = [5, 10, 15, 20];
+const evens = pullAt(array, 1, 3);
+console.log(array); // => [5, 15]
+console.log(evens); // => [10, 20]
+```
