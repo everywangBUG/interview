@@ -719,9 +719,14 @@ function sameValueZero(val1, val2) {
  * @return {number} num
  */
 function pull(arr, ...args) {
-    for (let i = 0; i < arr.length; i++) {
-
+    for (let i = 0; i < arr.length; i++;) {
+        for (let j = 0; j < args.length; j++;) {
+            if (sameValueZero(arr[i], args[j])) {
+                arr.splice(i, 1);
+            }
+        }
     }
+    return arr;
 }
 
 const array = [1, 2, 3, 1, 2, 3];
