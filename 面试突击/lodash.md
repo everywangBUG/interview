@@ -857,3 +857,72 @@ const evens = pullAt(array, 1, 3);
 console.log(array); // => [5, 15]
 console.log(evens); // => [10, 20]
 ```
+
+#### remove
+
+```javascript
+/**
+ * 移除数组中predicate返回真值的所有元素，返回移除元素组成的数组，改变原数组
+ * @param {Array} arr 要修改的数组
+ * @param {Array|Function|Object|string} 迭代函数
+ * @return {Array} res
+ */
+function remove(arr, predicate) {
+    if (!Array.isArray(arr)) {
+        return [];
+    }
+    
+    let res = [];
+    
+    if (typeof predicate === 'function') {
+        for (let i = arr.length - 1; i >= 0; i--) {
+            if (predicate(arr[i])) {
+                const removed = arr.splice(i, 1);
+                res.unshift(...removed);
+            }
+        }
+    }
+    return res;
+}
+const arr = [1, 2, 3, 4];
+const evens = remove(arr, function(n) {
+    return n % 2 === 0;
+})
+console.log(arr); // => [1, 3]
+console.log(evens); // => [2, 4]
+```
+
+#### reverse
+
+```javascript
+/**
+ * 反转arr，使得第一个元素变为最后一个元素，第二个元素变为倒数第二个元素，依次类推，改变原数组
+ * @param {Array} arr 要修改的数组
+ * @return {Array} res
+ */
+function reverse(arr) {
+    const res = [];
+    for(let i = arr.length - 1; i >= 0; i--) {
+        res.push(arr[i]);
+    }
+    return res;
+}
+const array = [1, 2, 3];
+reverse(array);
+```
+
+
+
+#### throttle
+
+```javascript
+/**
+ * 函数节流
+ * @param {Function} fn
+ * @param {number} delay
+ */
+function throttle(fn, delay) {
+    
+}
+```
+
