@@ -911,6 +911,32 @@ const array = [1, 2, 3];
 reverse(array);
 ```
 
+#### sortedIndex
+
+```javascript
+/**
+ * 使用二进制的方式检索来决定 value值 应该插入到数组中 尽可能小的索引位置，以保证array的排序(二分法）。
+ * @param {Array} arr 要检查的排序数组。
+ * @param {*} target 插入的值
+ * @return {number} index 返回 value值 应该在数组array中插入的索引位置
+ */
+function sortedIndex(arr, target) {
+    let left = 0;
+    let right = arr.length;
+
+    while(left < right) {
+        const middle = Math.floor((left + right) / 2);
+        if (arr[middle] < target) {
+            left = middle + 1;
+        } else{
+            right = middle;
+        }
+    }
+    return left;
+}
+sortedIndex([10, 20, 30, 40, 50], 25); // => 1
+sortedIndex([30, 50], 40); // => 1
+```
 
 
 #### debounce
