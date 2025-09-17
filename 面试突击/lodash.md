@@ -942,7 +942,7 @@ b();
 /**
  * 函数节流
  * @param {Function} fn 执行的函数
- * @param {number} time 延迟时间
+ * @param {number} time 间隔时间
  */
 function throttle(fn, time) {
     let scheduled = false;
@@ -959,7 +959,8 @@ function throttle(fn, time) {
         if (!scheduled) { // 没有执行过执行一次
             timer = setTimeout(() => {
                 fn.call(this, ...latestArgs);
-				scheduled = false;
+                scheduled = false;
+                lastRunTime = false;
             }, time);
             scheduled = true;
         }
@@ -967,12 +968,18 @@ function throttle(fn, time) {
     
     // 立即执行一次
     throttleFn.flush = function() {
-        throttleFn.cancel();
+        if (latestArgs) {
+            clearTimeout(timer);
+            scheduled = false;
+            lastRuntime = Date.now();
+            return fn.call(this, latestArgs);
+        }
     }
     
     // 取消方法
     throttleFn.cancel = function() {
         clearTimeout(timer);
+        scheduled = false;
     }
    	
     return throttleFn;
