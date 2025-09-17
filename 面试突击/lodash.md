@@ -913,16 +913,69 @@ reverse(array);
 
 
 
+#### debounce
+
+```javascript
+/**
+ * 函数防抖
+ * @param {Function} fn 执行的函数
+ * @param {number} delay 延迟时间
+ */
+function debounce( fn, delay) {
+    let timer;
+    const throttleFn = function(...args) {
+		if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.call(this, ...args);
+        }, delay);
+    }
+    return throttleFn;
+}
+const a = () => console.log(111);
+const b = debounce(a, 3000);
+b();
+```
+
 #### throttle
 
 ```javascript
 /**
  * 函数节流
- * @param {Function} fn
- * @param {number} delay
+ * @param {Function} fn 执行的函数
+ * @param {number} time 延迟时间
  */
-function throttle(fn, delay) {
+function throttle(fn, time) {
+    let scheduled = false;
+    let latestArgs;
+    let lastRunTime = 0;
+    let timer;
+    const throttleFn = function(...args) {
+        latestArgs = args;
+        // 第一次执行
+        if (Date.now() - lastRunTime > time) {
+            lastRunTime = Date.now();
+            return fn.call(this, ...latestArgs);
+        }
+        if (!scheduled) { // 没有执行过执行一次
+            timer = setTimeout(() => {
+                fn.call(this, ...latestArgs);
+				scheduled = false;
+            }, time);
+            scheduled = true;
+        }
+    }
     
+    // 立即执行一次
+    throttleFn.flush = function() {
+        throttleFn.cancel();
+    }
+    
+    // 取消方法
+    throttleFn.cancel = function() {
+        clearTimeout(timer);
+    }
+   	
+    return throttleFn;
 }
 ```
 
