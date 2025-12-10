@@ -15,6 +15,9 @@
 //     }
 // }
 
-const App = <div id='app' style={{width: '100px', height: '100px', backgroundColor: 'red'}}>手写react框架</div>
+import React from './react';
+
+// vite自动调用React中的createElement函数，这里引入React自定义的createElement函数
+const App = <div id='app' style="width:100px;height:100px;background-color:red">手写react框架</div>
 
 export default App;
