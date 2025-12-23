@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>web_worker</title>
+    <style>
+    </style>
+</head>
+
+<body>
+    <h2>web_worker</h2>
+    <button class="btn1">click</button>
+    <script>
+        const worker = new Worker("worker.js");
+        const btn1El = document.querySelector('.btn1')
+
+        btn1El.addEventListener('click', () => {
+            // 监听web Worker发送的消息
+            worker.onmessage = function (event) {
+                console.log("worker发送的信息", event.data);
+            };
+
+            worker.postMessage(100);
+        })
+    </script>
+</body>
+
+</html>

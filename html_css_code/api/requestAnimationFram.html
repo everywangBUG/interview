@@ -25,15 +25,19 @@
         btn1El.addEventListener('click', () => {
             let currentWidth = 100
             const maxWidth = 500
+            let cancelAnimationFrameId;
 
             function addWidth() {
                 currentWidth = currentWidth + 5
                 divEl.style.width = `${currentWidth}px`
                 if (currentWidth < maxWidth) {
-                    window.requestAnimationFrame(addWidth)
+                    // 要求浏览器在下一次重绘之前，调用用户提供的回调函数，回调函数的调用频率一般是60HZ
+                    cancelAnimationFrameId = window.requestAnimationFrame(addWidth)
                 }
             }
             addWidth()
+            // 可以使用cancelAnimationFrameId传入cancelAnimationFrame取消该刷新回调
+            window.cancelAnimationFrame(cancelAnimationFrameId);
         })
     </script>
 </body>

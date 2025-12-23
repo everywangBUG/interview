@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localStorage vs sessionStorage 详细对比</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .comparison-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .storage-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .storage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .localstorage-card {
+            border-top: 5px solid #3498db;
+        }
+        
+        .sessionstorage-card {
+            border-top: 5px solid #2ecc71;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .local-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .session-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .card-title h2 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .card-title p {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+        
+        .characteristics {
+            margin-bottom: 25px;
+        }
+        
+        .char-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .char-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            margin-top: 2px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .local-char {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+        
+        .session-char {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+        }
+        
+        .char-text h4 {
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .char-text p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .demo-section {
+            margin-bottom: 25px;
+        }
+        
+        .demo-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .demo-title i {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .local-input:focus {
+            border-color: #3498db;
+        }
+        
+        .session-input:focus {
+            border-color: #2ecc71;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .local-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .local-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .session-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .session-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .neutral-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .neutral-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .storage-data {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .data-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .data-content {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .empty-data {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        /* 对比表格 */
+        .comparison-table {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        
+        .table-title {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: #f8f9fa;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .feature {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .same {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .different {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        /* 使用场景部分 */
+        .use-cases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .use-case-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .use-case-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .use-case-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .local-use {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .session-use {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .use-case-list {
+            padding-left: 20px;
+        }
+        
+        .use-case-list li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        /* 实验区域 */
+        .experiment-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        
+        .experiment-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        
+        .experiment-instructions {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .instructions-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .instructions-list li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .experiment-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+            min-height: 100px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>localStorage vs sessionStorage</h1>
+            <p class="subtitle">深入理解两种Web Storage API的核心区别、特性及使用场景</p>
+        </header>
+        
+        <!-- 对比表格 -->
+        <div class="comparison-table">
+            <h2 class="table-title">核心区别对比</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>特性</th>
+                        <th>localStorage</th>
+                        <th>sessionStorage</th>
+                        <th>是否相同</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature">数据生命周期</td>
+                        <td>永久存储，直到手动清除</td>
+                        <td>会话期间有效，关闭标签页/浏览器后清除</td>
+                        <td><span class="different">不同</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature">作用域</td>
+                        <td>同源下的所有标签页和窗口共享</td>
+                        <td>仅当前标签页有效，其他标签页无法访问</td>
+                        <td><span class="different">不同</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature">存储容量</td>
+                        <td>通常5-10MB（不同浏览器有差异）</td>
+                        <td>通常5-10MB（不同浏览器有差异）</td>
+                        <td><span class="same">相同</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature">API方法</td>
+                        <td>setItem(), getItem(), removeItem(), clear(), key(), length</td>
+                        <td>setItem(), getItem(), removeItem(), clear(), key(), length</td>
+                        <td><span class="same">相同</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature">数据格式</td>
+                        <td>仅支持字符串，存储对象需JSON.stringify()</td>
+                        <td>仅支持字符串，存储对象需JSON.stringify()</td>
+                        <td><span class="same">相同</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature">事件监听</td>
+                        <td>支持storage事件，跨窗口监听</td>
+                        <td>同源页面间不共享，无storage事件</td>
+                        <td><span class="different">不同</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 对比演示区域 -->
+        <div class="comparison-section">
+            <!-- localStorage 卡片 -->
+            <div class="storage-card localstorage-card">
+                <div class="card-header">
+                    <div class="icon local-icon">L</div>
+                    <div class="card-title">
+                        <h2>localStorage</h2>
+                        <p>永久存储，跨会话持久化</p>
+                    </div>
+                </div>
+                
+                <div class="characteristics">
+                    <div class="char-item">
+                        <div class="char-icon local-char">1</div>
+                        <div class="char-text">
+                            <h4>永久存储</h4>
+                            <p>数据永久保存，除非手动清除或通过代码删除</p>
+                        </div>
+                    </div>
+                    <div class="char-item">
+                        <div class="char-icon local-char">2</div>
+                        <div class="char-text">
+                            <h4>跨标签页共享</h4>
+                            <p>同源下的所有窗口和标签页可访问相同数据</p>
+                        </div>
+                    </div>
+                    <div class="char-item">
+                        <div class="char-icon local-char">3</div>
+                        <div class="char-text">
+                            <h4>事件监听</h4>
+                            <p>支持storage事件，可跨窗口监听数据变化</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-section">
+                    <h3 class="demo-title"><i>🔧</i> 功能演示</h3>
+                    
+                    <div class="input-group">
+                        <label for="localKey">键名 (Key):</label>
+                        <input type="text" id="localKey" class="local-input" placeholder="例如: username">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="localValue">键值 (Value):</label>
+                        <input type="text" id="localValue" class="local-input" placeholder="例如: 张三">
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="local-btn" onclick="saveToLocalStorage()">
+                            <span>💾</span> 保存到localStorage
+                        </button>
+                        <button class="local-btn" onclick="getFromLocalStorage()">
+                            <span>🔍</span> 从localStorage读取
+                        </button>
+                        <button class="neutral-btn" onclick="clearLocalStorage()">
+                            <span>🗑️</span> 清空localStorage
+                        </button>
+                    </div>
+                    
+                    <div class="storage-data">
+                        <div class="data-title">当前localStorage数据:</div>
+                        <div id="localData" class="data-content empty-data">暂无数据</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- sessionStorage 卡片 -->
+            <div class="storage-card sessionstorage-card">
+                <div class="card-header">
+                    <div class="icon session-icon">S</div>
+                    <div class="card-title">
+                        <h2>sessionStorage</h2>
+                        <p>会话存储，标签页关闭后清除</p>
+                    </div>
+                </div>
+                
+                <div class="characteristics">
+                    <div class="char-item">
+                        <div class="char-icon session-char">1</div>
+                        <div class="char-text">
+                            <h4>会话级存储</h4>
+                            <p>数据仅在当前浏览器标签页有效，关闭即清除</p>
+                        </div>
+                    </div>
+                    <div class="char-item">
+                        <div class="char-icon session-char">2</div>
+                        <div class="char-text">
+                            <h4>标签页隔离</h4>
+                            <p>每个标签页有独立的存储空间，互不干扰</p>
+                        </div>
+                    </div>
+                    <div class="char-item">
+                        <div class="char-icon session-char">3</div>
+                        <div class="char-text">
+                            <h4>无跨窗口事件</h4>
+                            <p>不支持storage事件，无法跨标签页监听</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-section">
+                    <h3 class="demo-title"><i>🔧</i> 功能演示</h3>
+                    
+                    <div class="input-group">
+                        <label for="sessionKey">键名 (Key):</label>
+                        <input type="text" id="sessionKey" class="session-input" placeholder="例如: cartItems">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="sessionValue">键值 (Value):</label>
+                        <input type="text" id="sessionValue" class="session-input" placeholder="例如: ['item1', 'item2']">
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="session-btn" onclick="saveToSessionStorage()">
+                            <span>💾</span> 保存到sessionStorage
+                        </button>
+                        <button class="session-btn" onclick="getFromSessionStorage()">
+                            <span>🔍</span> 从sessionStorage读取
+                        </button>
+                        <button class="neutral-btn" onclick="clearSessionStorage()">
+                            <span>🗑️</span> 清空sessionStorage
+                        </button>
+                    </div>
+                    
+                    <div class="storage-data">
+                        <div class="data-title">当前sessionStorage数据:</div>
+                        <div id="sessionData" class="data-content empty-data">暂无数据</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 使用场景 -->
+        <div class="use-cases">
+            <div class="use-case-card">
+                <div class="use-case-title">
+                    <div class="use-case-icon local-use">L</div>
+                    <h3>localStorage 使用场景</h3>
+                </div>
+                <ul class="use-case-list">
+                    <li><strong>用户偏好设置</strong> - 主题、语言、字体大小等</li>
+                    <li><strong>登录状态</strong> - 记住用户登录状态（配合token）</li>
+                    <li><strong>购物车数据</strong> - 用户关闭页面后仍保留商品</li>
+                    <li><strong>应用配置</strong> - 保存用户的个性化配置</li>
+                    <li><strong>离线数据</strong> - 缓存应用数据供离线使用</li>
+                </ul>
+            </div>
+            
+            <div class="use-case-card">
+                <div class="use-case-title">
+                    <div class="use-case-icon session-use">S</div>
+                    <h3>sessionStorage 使用场景</h3>
+                </div>
+                <ul class="use-case-list">
+                    <li><strong>表单数据暂存</strong> - 防止页面刷新导致数据丢失</li>
+                    <li><strong>单次会话数据</strong> - 临时数据，关闭页面后无需保留</li>
+                    <li><strong>页面间传递数据</strong> - 在同一标签页内传递数据</li>
+                    <li><strong>敏感信息</strong> - 临时存储敏感信息，关闭页面自动清除</li>
+                    <li><strong>多步骤流程</strong> - 向导或表单的多步骤数据暂存</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 实验区域 -->
+        <div class="experiment-section">
+            <h2 class="experiment-title">🌡️ 实验：验证区别</h2>
+            
+            <div class="experiment-instructions">
+                <div class="instructions-title">实验说明：</div>
+                <ul>
+                    <li>点击"保存相同数据到两者"按钮，将相同数据同时保存到localStorage和sessionStorage</li>
+                    <li>尝试<strong>刷新页面</strong> - 两者数据都会保留</li>
+                    <li>尝试<strong>复制本页面到新标签页</strong> - localStorage数据会同步，sessionStorage不会</li>
+                    <li>尝试<strong>关闭本标签页再重新打开</strong> - localStorage数据保留，sessionStorage数据被清除</li>
+                </ul>
+            </div>
+            
+            <div class="btn-group experiment-buttons">
+                <button class="local-btn" onclick="saveToBoth()">
+                    <span>🔄</span> 保存相同数据到两者
+                </button>
+                <button class="session-btn" onclick="compareBoth()">
+                    <span>⚖️</span> 比较两者数据
+                </button>
+                <button class="neutral-btn" onclick="clearBoth()">
+                    <span>🧹</span> 清空两者数据
+                </button>
+                <button class="neutral-btn" onclick="openNewTab()">
+                    <span>🔗</span> 复制本页到新标签页
+                </button>
+            </div>
+            
+            <div class="result-box">
+                <div class="data-title">实验结果:</div>
+                <div id="experimentResult" class="data-content empty-data">点击上方按钮进行实验</div>
+            </div>
+        </div>
+        
+        <!-- API方法参考 -->
+        <div class="comparison-table">
+            <h2 class="table-title">API 方法参考</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>方法</th>
+                        <th>语法</th>
+                        <th>描述</th>
+                        <th>示例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature">setItem()</td>
+                        <td>storage.setItem(key, value)</td>
+                        <td>存储键值对（值必须是字符串）</td>
+                        <td>localStorage.setItem('user', '张三')</td>
+                    </tr>
+                    <tr>
+                        <td class="feature">getItem()</td>
+                        <td>storage.getItem(key)</td>
+                        <td>获取指定键的值</td>
+                        <td>let user = localStorage.getItem('user')</td>
+                    </tr>
+                    <tr>
+                        <td class="feature">removeItem()</td>
+                        <td>storage.removeItem(key)</td>
+                        <td>删除指定键值对</td>
+                        <td>localStorage.removeItem('user')</td>
+                    </tr>
+                    <tr>
+                        <td class="feature">clear()</td>
+                        <td>storage.clear()</td>
+                        <td>清空所有存储的数据</td>
+                        <td>localStorage.clear()</td>
+                    </tr>
+                    <tr>
+                        <td class="feature">key()</td>
+                        <td>storage.key(index)</td>
+                        <td>获取第n个键的名称</td>
+                        <td>let key = localStorage.key(0)</td>
+                    </tr>
+                    <tr>
+                        <td class="feature">length</td>
+                        <td>storage.length</td>
+                        <td>获取存储的键值对数量（属性）</td>
+                        <td>let count = localStorage.length</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="experiment-instructions" style="margin-top: 20px;">
+                <div class="instructions-title">💡 重要提示：</div>
+                <ul>
+                    <li>两种Storage的API完全相同，只是存储周期和作用域不同</li>
+                    <li>只能存储字符串，存储对象需使用<strong>JSON.stringify()</strong></li>
+                    <li>读取对象需使用<strong>JSON.parse()</strong></li>
+                    <li>同源策略：只有相同协议、域名、端口的页面才能访问相同数据</li>
+                    <li>存储容量有限（通常5-10MB），超出会抛出异常</li>
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>演示说明：这是一个交互式演示，展示了localStorage和sessionStorage的核心区别。</p>
+            <p>尝试在浏览器开发者工具（Application > Storage）中实时查看存储数据的变化。</p>
+        </footer>
+    </div>
+
+    <script>
+        // 页面加载时显示当前存储的数据
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLocalDataDisplay();
+            updateSessionDataDisplay();
+            
+            // 监听localStorage变化事件（跨标签页）
+            window.addEventListener('storage', function(event) {
+                if (event.storageArea === localStorage) {
+                    updateLocalDataDisplay();
+                    document.getElementById('experimentResult').textContent = 
+                        `检测到localStorage变化！\n键: ${event.key}\n旧值: ${event.oldValue}\n新值: ${event.newValue}\nURL: ${event.url}`;
+                }
+            });
+        });
+        
+        // 更新localStorage数据显示
+        function updateLocalDataDisplay() {
+            const localDataDiv = document.getElementById('localData');
+            if (localStorage.length === 0) {
+                localDataDiv.innerHTML = '<span class="empty-data">暂无数据</span>';
+                return;
+            }
+            
+            let html = '';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                html += `<span class="highlight">${key}</span>: ${value}\n`;
+            }
+            localDataDiv.textContent = html;
+        }
+        
+        // 更新sessionStorage数据显示
+        function updateSessionDataDisplay() {
+            const sessionDataDiv = document.getElementById('sessionData');
+            if (sessionStorage.length === 0) {
+                sessionDataDiv.innerHTML = '<span class="empty-data">暂无数据</span>';
+                return;
+            }
+            
+            let html = '';
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                const value = sessionStorage.getItem(key);
+                html += `<span class="highlight">${key}</span>: ${value}\n`;
+            }
+            sessionDataDiv.textContent = html;
+        }
+        
+        // 保存到localStorage
+        function saveToLocalStorage() {
+            const key = document.getElementById('localKey').value.trim();
+            const value = document.getElementById('localValue').value.trim();
+            
+            if (!key) {
+                alert('请输入键名！');
+                return;
+            }
+            
+            try {
+                localStorage.setItem(key, value);
+                document.getElementById('localKey').value = '';
+                document.getElementById('localValue').value = '';
+                updateLocalDataDisplay();
+                document.getElementById('experimentResult').textContent = 
+                    `✅ 成功保存到localStorage: ${key} = ${value}`;
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    alert('存储空间不足！请清除一些数据再试。');
+                } else {
+                    alert('保存失败: ' + e.message);
+                }
+            }
+        }
+        
+        // 从localStorage读取
+        function getFromLocalStorage() {
+            const key = document.getElementById('localKey').value.trim();
+            
+            if (!key) {
+                alert('请输入键名！');
+                return;
+            }
+            
+            const value = localStorage.getItem(key);
+            if (value === null) {
+                document.getElementById('localValue').value = '';
+                document.getElementById('experimentResult').textContent = 
+                    `❌ localStorage中不存在键: ${key}`;
+            } else {
+                document.getElementById('localValue').value = value;
+                document.getElementById('experimentResult').textContent = 
+                    `🔍 从localStorage读取: ${key} = ${value}`;
+            }
+        }
+        
+        // 清空localStorage
+        function clearLocalStorage() {
+            if (localStorage.length === 0) {
+                alert('localStorage已经是空的！');
+                return;
+            }
+            
+            if (confirm('确定要清空localStorage中的所有数据吗？')) {
+                localStorage.clear();
+                updateLocalDataDisplay();
+                document.getElementById('experimentResult').textContent = 
+                    '🗑️ localStorage已清空！';
+            }
+        }
+        
+        // 保存到sessionStorage
+        function saveToSessionStorage() {
+            const key = document.getElementById('sessionKey').value.trim();
+            const value = document.getElementById('sessionValue').value.trim();
+            
+            if (!key) {
+                alert('请输入键名！');
+                return;
+            }
+            
+            try {
+                sessionStorage.setItem(key, value);
+                document.getElementById('sessionKey').value = '';
+                document.getElementById('sessionValue').value = '';
+                updateSessionDataDisplay();
+                document.getElementById('experimentResult').textContent = 
+                    `✅ 成功保存到sessionStorage: ${key} = ${value}`;
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    alert('存储空间不足！请清除一些数据再试。');
+                } else {
+                    alert('保存失败: ' + e.message);
+                }
+            }
+        }
+        
+        // 从sessionStorage读取
+        function getFromSessionStorage() {
+            const key = document.getElementById('sessionKey').value.trim();
+            
+            if (!key) {
+                alert('请输入键名！');
+                return;
+            }
+            
+            const value = sessionStorage.getItem(key);
+            if (value === null) {
+                document.getElementById('sessionValue').value = '';
+                document.getElementById('experimentResult').textContent = 
+                    `❌ sessionStorage中不存在键: ${key}`;
+            } else {
+                document.getElementById('sessionValue').value = value;
+                document.getElementById('experimentResult').textContent = 
+                    `🔍 从sessionStorage读取: ${key} = ${value}`;
+            }
+        }
+        
+        // 清空sessionStorage
+        function clearSessionStorage() {
+            if (sessionStorage.length === 0) {
+                alert('sessionStorage已经是空的！');
+                return;
+            }
+            
+            if (confirm('确定要清空sessionStorage中的所有数据吗？')) {
+                sessionStorage.clear();
+                updateSessionDataDisplay();
+                document.getElementById('experimentResult').textContent = 
+                    '🗑️ sessionStorage已清空！';
+            }
+        }
+        
+        // 保存相同数据到两者
+        function saveToBoth() {
+            const key = 'testData';
+            const value = '这是一条测试数据，保存于 ' + new Date().toLocaleTimeString();
+            
+            localStorage.setItem(key, value);
+            sessionStorage.setItem(key, value);
+            
+            updateLocalDataDisplay();
+            updateSessionDataDisplay();
+            
+            document.getElementById('experimentResult').textContent = 
+                `✅ 已将相同数据保存到两者:\n键: ${key}\n值: ${value}\n\n请尝试:\n1. 刷新页面（两者数据都会保留）\n2. 复制本页到新标签页（localStorage共享，sessionStorage不共享）\n3. 关闭本标签页再打开（localStorage保留，sessionStorage清除）`;
+        }
+        
+        // 比较两者数据
+        function compareBoth() {
+            let result = '🔍 数据对比结果:\n\n';
+            result += 'localStorage 数据:\n';
+            
+            if (localStorage.length === 0) {
+                result += '  (空)\n';
+            } else {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    result += `  ${key}: ${value}\n`;
+                }
+            }
+            
+            result += '\nsessionStorage 数据:\n';
+            
+            if (sessionStorage.length === 0) {
+                result += '  (空)\n';
+            } else {
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const key = sessionStorage.key(i);
+                    const value = sessionStorage.getItem(key);
+                    result += `  ${key}: ${value}\n`;
+                }
+            }
+            
+            // 检查是否有相同键但值不同的情况
+            let differences = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const localValue = localStorage.getItem(key);
+                const sessionValue = sessionStorage.getItem(key);
+                
+                if (sessionValue !== null && localValue !== sessionValue) {
+                    differences.push(`${key}: localStorage="${localValue}" vs sessionStorage="${sessionValue}"`);
+                }
+            }
+            
+            if (differences.length > 0) {
+                result += '\n⚠️ 发现差异:\n' + differences.join('\n');
+            } else if (localStorage.length > 0 && sessionStorage.length > 0) {
+                result += '\n✅ 两者数据一致';
+            }
+            
+            document.getElementById('experimentResult').textContent = result;
+        }
+        
+        // 清空两者数据
+        function clearBoth() {
+            localStorage.clear();
+            sessionStorage.clear();
+            updateLocalDataDisplay();
+            updateSessionDataDisplay();
+            document.getElementById('experimentResult').textContent = '🧹 已清空localStorage和sessionStorage中的所有数据！';
+        }
+        
+        // 复制本页到新标签页
+        function openNewTab() {
+            const newTab = window.open(window.location.href, '_blank');
+            if (newTab) {
+                document.getElementById('experimentResult').textContent = 
+                    '🔗 已在新标签页中打开本页面。\n\n观察:\n1. 检查新标签页的localStorage是否与当前页相同\n2. 检查新标签页的sessionStorage是否为空（因为是新的会话）\n3. 尝试在当前页修改localStorage数据，看新标签页是否通过storage事件收到通知';
+            }
+        }
+        
+        // 存储对象的示例函数
+        function saveObjectExample() {
+            const user = {
+                name: "张三",
+                age: 25,
+                email: "zhangsan@example.com",
+                preferences: {
+                    theme: "dark",
+                    language: "zh-CN"
+                }
+            };
+            
+            // 存储对象需要转换为JSON字符串
+            localStorage.setItem('userData', JSON.stringify(user));
+            
+            // 读取对象需要解析JSON
+            const storedUser = JSON.parse(localStorage.getItem('userData'));
+            
+            document.getElementById('experimentResult').textContent = 
+                '💾 对象存储示例:\n' + 
+                '保存的对象: ' + JSON.stringify(user, null, 2) + '\n\n' +
+                '从localStorage读取的对象: ' + JSON.stringify(storedUser, null, 2);
+        }
+    </script>
+</body>
+</html>

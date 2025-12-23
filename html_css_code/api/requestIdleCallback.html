@@ -25,15 +25,19 @@
         btn1El.addEventListener('click', () => {
             let currentWidth = 100
             const maxWidth = 500
+            let cancelIdleCallbackId;
 
             function addWidth() {
                 currentWidth = currentWidth + 5
                 divEl.style.width = `${currentWidth}px`
                 if (currentWidth < maxWidth) {
-                    window.requestIdleCallback(addWidth)
+                    // 在浏览器空闲的时间调用回调函数，在下一次的事件循环之前调度另一个回调
+                    cancelIdleCallbackId = window.requestIdleCallback(addWidth)
                 }
             }
             addWidth()
+            // 通过返回的id接受回调
+            window.cancelIdleCallback(cancelIdleCallbackId);
         })
     </script>
 </body>
