@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class_schedule_drag</title>
+    <style>
+        .container {
+            background-color: #f5faf6;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        .title {
+            text-align: center;
+        }
+        .main_container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left_sidebar {
+            flex: 0 0 300px;
+            display: flex;
+        }
+        
+        .subject_pool {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 20px;
+        }
+
+        .subject_pool_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subject_pool_content > div {
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            text-align: center;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            line-height: 40px;
+        }
+
+        #add_subject_btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 80px;
+            transition: background-color 0.2s;
+            color: #ffffff;
+            background-color: #027bff;
+        }
+
+        .right_content {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-left: 20px;
+            border-radius: 20px;
+        }
+
+        #timetable {
+            border-collapse: collapse;
+        }
+
+        #timetable th {
+            border: 1px solid #a8d5ba;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+            color: #2c5530;
+        }
+        
+        #timetable_body td {
+            border: 1px solid #a8d5ba;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+            color: #2c5530;
+        }
+
+        .virtical_text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time_display {
+            
+        }
+
+        .empty_cell {
+            text-align: center;
+            cursor: pointer;
+            padding: 12px;
+        }
+
+        .cell {
+            width: 120px;
+            height: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="title">拖曳生成课程表</h2>
+        <div class="main_container">
+            <div class="left_sidebar">
+                <div class="subject_pool">
+                    <div class="subject_pool_header">
+                        <h3>科目池</h3>
+                        <button id="add_subject_btn">+&nbsp;添加科目</button>
+                    </div>
+                    <div class="subject_pool_content">
+                    </div>
+                </div>
+            </div>
+            <div class="right_content">
+                <table id="timetable">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>课时</th>
+                            <th>周一</th>
+                            <th>周二</th>
+                            <th>周三</th>
+                            <th>周四</th>
+                            <th>周五</th>
+                            <th>周六</th>
+                            <th>周日</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timetable_body">
+                        <tr class="time_cell">
+                            <td class="time_cell" rowspan="5">
+                                <div class="virtical_text">
+                                    <span>上</span>
+                                    <span>午</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="period_tr">
+                            <td class="period_cell">
+                                <div class="time_display">
+                                    08:00-08:40
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="period_tr">
+                            <td class="period_cell">
+                                <div class="time_display">
+                                    08:50-09:30
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="period_tr">
+                            <td class="period_cell">
+                                <div class="time_display">
+                                    10:00-10:40
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="period_tr">
+                            <td calss="period_cell">
+                                <div class="time_display">
+                                    10:50-11:30
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="time_cell">
+                            <td class="time_cell" rowspan="4">
+                                <div class="virtical_text">
+                                    <span>下</span>
+                                    <span>午</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="period_tr">
+                            <td class="period_cell">
+                                <div class="time_display">
+                                    14:00-14:40
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="period_tr">
+                            <td class="period_cell">
+                                <div class="time_display">
+                                    14:50-15:30
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="period_tr">
+                            <td class="period_cell">
+                                <div class="time_display">
+                                    15:40-16:20
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        const subjects = [
+            { name: '语文', key: 'chinese' },
+            { name: '数学', key: 'math' },
+            { name: '英语', key: 'english' },
+            { name: '美术', key: 'art' },
+            { name: '健康与体育', key: 'health' },
+            { name: '道德与法治', key: 'law' },
+            { name: '音乐', key: 'music' }
+        ]
+
+        function initSubjectPool() {
+            const subjectPoolContentEl = document.querySelector('.subject_pool_content');
+            for (let i = 0; i < subjects.length; i++) {
+                const div = document.createElement('div');
+                div.textContent = subjects[i].name;
+                div.setAttribute('draggable', true);
+                div.setAttribute('data-subject', subjects[i].key);
+                div.setAttribute('data-index', i);
+                div.addEventListener('dragstart', (e) => handleDragStart(e, subjects[i]));
+                div.addEventListener('dragend', handleDragEnd)
+                subjectPoolContentEl.append(div);
+            }
+        }
+        
+        initSubjectPool()
+
+        function handleDragStart(e, subjectData) {
+            e.dataTransfer.setData('subjectData', subjectData);
+        }
+
+        function handleDragEnd(e) {
+            console.log(e)
+        }
+
+        function initTimeTable() {
+            const timetableEl = document.getElementById('#timetable');
+            const trContainer = document.querySelectorAll('.period_tr');
+            for (let i = 0; i < trContainer.length; i++) {
+                const singleTrContainer = trContainer[i];
+                for (let j = 0; j < 7; j++) {
+                    const td = document.createElement('td');
+                    td.className = 'cell empty_cell';
+                    td.textContent = '+';
+                    td.addEventListener('drop', handleDrop);
+                    td.addEventListener('dragover', handleDragOver);
+                    singleTrContainer.append(td);
+                }
+            }
+        }
+
+        initTimeTable();
+
+        function handleDrop(e) {
+            e.preventDefault();
+            console.log(e, '111');
+            const data = e.dataTransfer.getData('subjectData')
+            console.log(data, '0000')
+
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+        }
+
+        function findCellPosition() {
+            const cell = document.querySelectorAll('.cell');
+            const periodCell = document.querySelectorAll('.period_cell');
+            console.log(periodCell, 'periodCell');
+            console.log(cell, 'cell');
+        }
+
+        findCellPosition();
+    </script>
+</body>
+
+</html>
