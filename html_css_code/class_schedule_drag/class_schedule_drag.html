@@ -109,10 +109,6 @@
             align-items: center;
         }
 
-        .time_display {
-            
-        }
-
         .empty_cell {
             text-align: center;
             cursor: pointer;
@@ -129,6 +125,72 @@
             border: 2px dotted #4caf50 !important;
         }
 
+        .subject_in_cell {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 5px;
+            border-radius: 5px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        
+        .subject_in_cell:hover .remove_subject {
+            opacity: 1;
+        }
+
+        .remove_subject {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            outline: none;
+            border: none;
+            color: rebeccapurple;
+            font-size: 12px;
+            transform: scale(0.8);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        .dragging {
+            background-color: #f8f9fa;
+            text-align: center;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            line-height: 40px;
+        }
+
+        .modalMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            min-width: 380px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
     </style>
 </head>
 
@@ -143,7 +205,6 @@
                 <div class="subject_pool">
                     <div class="subject_pool_header">
                         <h3>科目池</h3>
-                        <button id="add_subject_btn">+&nbsp;添加科目</button>
                     </div>
                     <div class="subject_pool_content">
                     </div>
@@ -172,7 +233,7 @@
     </div>
     <script>
         const subjects = [
-            { name: '语文', key: 'chinese', color: 'yellow' },
+            { name: '语文', key: 'chinese', color: 'tomato' },
             { name: '数学', key: 'math', color: 'green'},
             { name: '英语', key: 'english', color: 'red' },
             { name: '美术', key: 'art', color: 'skyblue' },
@@ -181,8 +242,18 @@
             { name: '音乐', key: 'music', color: 'orange' }
         ]
 
+        const scheduleData = {};
+
+        // 初始化选择课程池
         function initSubjectPool() {
+            const subjectPoolHeader = document.querySelector('.subject_pool_header');
             const subjectPoolContentEl = document.querySelector('.subject_pool_content');
+            const button = document.createElement('button');
+            addSubjectIntoPool(button);
+
+            button.id = 'add_subject_btn';
+            button.textContent = '+ 添加科目';
+            subjectPoolHeader.append(button);
             for (let i = 0; i < subjects.length; i++) {
                 const div = document.createElement('div');
                 div.textContent = subjects[i].name;
@@ -195,8 +266,87 @@
             }
         }
         
-        initSubjectPool()
+        // 加载课程表数据
+        function loadSchedule () {
+            const saved = localStorage.getItem('class_schedule');
+            if (saved) {
+                const savedData = JSON.parse(saved);
+                // 合并保存的数据
+                Object.assign(scheduleData, savedData);
 
+                // 刷新回复单元格显示
+                Object.keys(savedData).forEach(key => {
+                    if (savedData[key]) {
+                        const [day, period] = key.split('_');
+                        // 如果cell有值更新视图
+                        const cell = document.querySelector(`.cell[data-day="${day}"][data-period="${period}"]`)
+                        if (cell) {
+                            updateCellDisplay(cell, savedData[key])
+                        }
+                    }
+                })
+            }
+        }
+
+        // 添加科目
+        function addSubjectIntoPool(button) {
+            button.addEventListener('click', (e) => {
+                const modalMask = document.createElement('div');
+                const modal = document.createElement('div');
+                const body = document.querySelector('body');
+                
+                modal.className = 'modal';
+                modalMask.className = 'modalMask';
+                const subjectNameInput = document.createElement('input');
+                subjectNameInput.className = 'subject_name_input';
+                const label = document.createElement('label');
+                const saveBtn = document.createElement('button');
+                saveBtn.innerText = '保存';
+                label.innerText = '科目名称';
+                modal.append(label);
+                modal.append(subjectNameInput);
+                modal.append(saveBtn);
+                modalMask.append(modal);
+                body.append(modalMask);
+            })
+        }
+
+        // 更新单元格的显示
+        function updateCellDisplay(cell, data) {
+            // 移除empty_cell类名
+            cell.classList.remove('empty_cell');
+
+            cell.innerHTML = `
+                <div class="subject_in_cell"
+                    data-subject="${data.subject}"
+                    style="background-color: ${data.color}"
+                >
+                    <span>${data.name}</span>
+                    <button class="remove_subject" title="移除">X</button>
+                </div>
+            `
+            
+            // 添加按钮移除事件
+            const removeBtn = cell.querySelector('.remove_subject');
+            removeBtn.addEventListener('click', (e) => {
+                const day = cell.getAttribute('data-day');
+                const period = cell.getAttribute('data-period');
+                const cellKey = `${day}_${period}`;
+                console.log(cellKey, 'cellKey');
+                e.stopPropagation();
+                
+                scheduleData[cellKey] = null;
+                localStorage.setItem('class_schedule', JSON.stringify(scheduleData));
+
+                cell.classList.remove('subject_fill');  
+                cell.classList.add('empty_cell');
+                cell.innerHTML = '+';
+
+                updateStatusMessage(`${data.name}已移除`);
+            });
+        }
+
+        // 目标元素拖曳开始
         function handleDragStart(e) {
             const subjectIndex = this.getAttribute('data-index');
             const subject = subjects[subjectIndex];
@@ -216,6 +366,7 @@
             updateStatusMessage('正在拖曳');
         }
 
+        // 目标元素拖曳结束
         function handleDragEnd(e) {
             // 移除拖曳的样式
             document.querySelectorAll('.dragging').forEach(el => {
@@ -229,6 +380,7 @@
             updateStatusMessage('拖曳结束');
         }
 
+        // 初始化课表
         function initTimeTable() {
             const timetableEl = document.getElementById('timetable_body');
 
@@ -265,15 +417,20 @@
                 periodCell.innerHTML = `<div class="time_display">${slot.time}</div>`;
                 tr.append(periodCell);
 
-                Array.from({length: 7}).forEach((_, index) => {
+                Array.from({length: 7}).forEach((_, idx) => {
                     const td = document.createElement('td');
                     td.className = 'cell empty_cell';
                     td.setAttribute('data-day', index);
+                    td.setAttribute('data-period', idx);
                     td.textContent = '+';
+
+                    // 初始化课程表数据结构
+                    const cellKey = `${index}_${idx}`
+                    // scheduleData[cellKey] = null;
 
                     td.addEventListener('dragover', handleDragover);
                     td.addEventListener('dragleave', handleDragleave);
-                    td.addEventListener('drop', handleDropLeave)
+                    td.addEventListener('drop', handleDrop)
 
                     tr.append(td);
                 });
@@ -282,23 +439,49 @@
             })
         }
 
-        initTimeTable();
-
+        // 拖曳经过的区域
         function handleDragover(e) {
             e.preventDefault();
-            console.log('dragover')
             e.dataTransfer.dropEffect = 'move';
             this.classList.add('drag_over');
         }
 
-        function handleDropLeave(e) {
+        // 放置
+        function handleDrop(e) {
             e.preventDefault();
-        }
+            try {
+                // 获取拖曳的数据
+                const data = JSON.parse(e.dataTransfer.getData('subjectData'));
+                // 从科目池中拖曳
+                if (data.source === 'pool') {
+                    const { name, color } = data;
+                    const day = this.getAttribute('data-day');
+                    const period = this.getAttribute('data-period');
 
+                    updateCellDisplay(this, data)
+
+                    const cellKey = `${day}_${period}`;
+                    scheduleData[cellKey] = data;
+                    // 存储到本地localStorage中
+                    localStorage.setItem('class_schedule', JSON.stringify(scheduleData));
+
+                    updateCellDisplay(this, data);
+                }
+
+                // 从课程表中拖曳
+            } catch(e) {
+                console.error('放置失败', e);
+                updateStatusMessage('放置失败，请重试');
+            }
+        }
+        
+        // 拖曳离开的区域
         function handleDragleave(e) {
             e.preventDefault();
+            this.classList.remove('drag_over');
         }
 
+        // 目标元素拖曳结束
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
@@ -309,6 +492,11 @@
             statusEl.textContent = message;
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            initTimeTable();
+            initSubjectPool()
+            loadSchedule();
+        })
     </script>
 </body>
 
