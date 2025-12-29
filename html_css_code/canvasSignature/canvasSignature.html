@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas 手写签名</title>
+  <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .signature_container {
+        margin: 0;
+        padding: 0;
+    }
+
+    .signature_title {
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .signature_wrapper {
+        position: relative;
+        border: 2px dashed #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: white;
+    }
+
+    #signature_canvas {
+        width: 100%;
+        height: 300px;
+        display: block;
+        cursor: crosshair;
+        background-color: white;
+    }
+
+    #canvas_placeholder {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        user-select: none;
+        cursor: crosshair;
+    }
+
+    .btn_wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .clear_btn, .save_btn {
+        outline: none;
+        border: 1px solid #ffffff;
+        border-radius: 5px;
+        background-color: #cccccc;
+        cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+    <div class="signature_container">
+        <h1 class="signature_title">Canvas 手写签名</h1>
+        <div class="signature_wrapper">
+            <canvas id="signature_canvas"></canvas>
+            <div id="canvas_placeholder">请在此处签名...</div>
+        </div>
+        <div class="btn_wrapper">
+            <button id="clear_btn">清除签名</button>
+            <button id="save_btn">保存签名</button>
+        </div>
+    </div>
+  </div>
+  <script>
+    class SignatureCanvas {
+        constructor(canvasId) {
+            this.canvas = document.getElementById(canvasId)
+            // 获取canvas的2d上下文
+            this.ctx = this.canvas.getContext('2d');
+            this.placeholder = document.getElementById('canvas_placeholder');
+
+            // 画笔设置
+            this.brushColor = '#000000';
+            this.brushSize = 4;
+            this.backgroundColor = '#ffffff';
+
+            // 状态设置
+            this.isDrawing = false;
+            this.hasSingnature = false;
+            this.lastX = 0;
+            this.lastY = 0;
+
+            // 初始化
+            this.initCanvas();
+            this.setupEventListeners();
+        }
+
+        // 初始化画布，根据屏幕的物理像素和css像素之比更正分辨率
+        initCanvas() {
+            const container = this.canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+
+            this.canvas.width = container.clientWidth * dpr;
+            this.canvas.height = container.clientHeight * dpr;
+
+            this.ctx.scale(dpr, dpr);
+
+            // 设置画布尺寸
+            this.canvas.style.width = container.clientWidth + 'px';
+            this.canvas.style.height = container.clientHeight + 'px';
+        }
+
+        // 设置事件监听
+        setupEventListeners() {
+            this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+            this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+            this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+            this.canvas.addEventListener('mouseout', this.handleMouseOut.bind(this));
+        }
+
+        handleMouseDown(e) {
+            e.preventDefault();
+            this.isDrawing = true;
+            this.hasSingnature = true;
+
+            const { x, y } = this.getPositionOfCanvas(e);
+
+            this.lastX = x;
+            this.lastY = y;
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.lastX, this.lastY);
+
+            this.placeholder.style.display = 'none';
+        }
+
+        handleMouseMove(e) {
+            e.preventDefault();
+            if (!this.isDrawing) return;
+
+            const { x, y } = this.getPositionOfCanvas(e);
+
+            // 绘制线条
+            this.ctx.lineWidth = this.brushSize;
+            this.ctx.lineTo(x, y);
+            this.ctx.stroke();
+
+            [this.lastX, this.lastY] = [x, y]
+        }
+
+        getPositionOfCanvas(e) {
+            // 获取画布的位置
+            const rect = this.canvas.getBoundingClientRect();
+            const clientX = e.clientX;
+            const clientY = e.clientY;
+
+            const x = (clientX - rect.left);
+            const y = (clientY - rect.top);
+
+            return { x, y };
+        }
+
+        handleMouseUp(e) {
+            this.isDrawing = false;
+            this.hasSingnature = false;
+        }
+
+        handleMouseOut(e) {
+            this.isDrawing = false;
+            this.hasSingnature = false;
+        }
+
+        // 清除画布
+        clear() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.isDrawing = false;
+            this.hasSingnature = false;
+        }
+
+        // 获取数据签名url
+        getSingnatureDataUrl() {
+            // 创建临时的画布添加背景
+
+            // 填充背景
+
+            // 绘制签名
+
+            // toDataURL返回
+        }
+    }
+
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const signatureCanvas = new SignatureCanvas('signature_canvas');    
+        document.getElementById('clear_btn').addEventListener('click', () => {
+            signatureCanvas.clear();
+        })
+    })
+
+  </script>
+</body>
+</html>
