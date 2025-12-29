@@ -9,11 +9,17 @@
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        margin: 0;
         padding: 20px;
     }
+
+    .signature {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        padding: 40px;
+    }
+
     .signature_container {
         margin: 0;
         padding: 0;
@@ -48,6 +54,7 @@
         transform: translate(-50%, -50%);
         user-select: none;
         cursor: crosshair;
+        color: #aaa;
     }
 
     .btn_wrapper {
@@ -57,28 +64,124 @@
         margin-top: 10px;
     }
 
-    .clear_btn, .save_btn {
+    #clear_btn, #save_btn {
         outline: none;
-        border: 1px solid #ffffff;
+        border: none;
         border-radius: 5px;
-        background-color: #cccccc;
         cursor: pointer;
+        background-color: transparent;
+    }
+
+    #clear_btn {
+        color: red;
+    }
+
+    #save_btn {
+        color: #3461f2;
+    }
+
+    .brush_setting {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brush_title {
+        font-size: 1.2em;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .brush_color {
+        margin-bottom: 20px;
+    }
+
+    .brush_thickness {
+        margin-bottom: 20px;
+    }
+
+    .bruch_color_title {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+    }
+
+    input[type="range"] {
+        flex: 1;
+        height: 6px;
+        -webkit-appearance: none;
+        background: #ddd;
+        border-radius: 3px;
+        outline: none;
+    }
+        
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #2575fc;
+        cursor: pointer;
+    }
+
+    #brush_color_list {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .color_option {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: transform 0.2s;
+    }
+
+    .color_option:hover {
+        transform: scale(1.1);
+    }
+
+    .color_option.active {
+        border-color: #333;
+        transform: scale(1.1);
     }
   </style>
 </head>
 <body>
-    <div class="signature_container">
-        <h1 class="signature_title">Canvas 手写签名</h1>
-        <div class="signature_wrapper">
-            <canvas id="signature_canvas"></canvas>
-            <div id="canvas_placeholder">请在此处签名...</div>
+    <h1 class="signature_title">Canvas 手写签名</h1>
+    <div class="signature">
+        <div class="signature_container">
+            <div class="signature_wrapper">
+                <canvas id="signature_canvas"></canvas>
+                <div id="canvas_placeholder">请在此处签名...</div>
+            </div>
+            <div class="btn_wrapper">
+                <button id="clear_btn">清除签名</button>
+                <button id="save_btn">保存签名</button>
+            </div>
         </div>
-        <div class="btn_wrapper">
-            <button id="clear_btn">清除签名</button>
-            <button id="save_btn">保存签名</button>
+        <div class="brush_setting">
+            <h2 class="brush_title">画笔设置</h2>
+            <div class="brush_color">
+                <span class="brush_color_title">画笔颜色</span>
+                <div id="brush_color_list"></div>
+            </div>
+            <div class="brush_thickness">
+                画笔粗细：
+                <span id="brush_thickness_title">3px</span>
+                <input type="range" id="brushSize" min="1" max="20" value="3" />
+            </div>
         </div>
     </div>
-  </div>
   <script>
     class SignatureCanvas {
         constructor(canvasId) {
@@ -94,7 +197,7 @@
 
             // 状态设置
             this.isDrawing = false;
-            this.hasSingnature = false;
+            this.hasSignature = false;
             this.lastX = 0;
             this.lastY = 0;
 
@@ -129,7 +232,7 @@
         handleMouseDown(e) {
             e.preventDefault();
             this.isDrawing = true;
-            this.hasSingnature = true;
+            this.hasSignature = true;
 
             const { x, y } = this.getPositionOfCanvas(e);
 
@@ -170,40 +273,121 @@
 
         handleMouseUp(e) {
             this.isDrawing = false;
-            this.hasSingnature = false;
+            this.hasSignature = true;
         }
 
         handleMouseOut(e) {
             this.isDrawing = false;
-            this.hasSingnature = false;
+            this.hasSignature = true;
         }
 
         // 清除画布
         clear() {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.isDrawing = false;
-            this.hasSingnature = false;
+            this.hasSignature = false;
         }
 
         // 获取数据签名url
-        getSingnatureDataUrl() {
+        getSignatureDataURL(format = 'image/png', quality = 1.0) {
             // 创建临时的画布添加背景
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
 
-            // 填充背景
+            tempCanvas.width = this.canvas.width;
+            tempCanvas.height = this.canvas.height;
 
+            // 填充背景默认白色
+            tempCtx.fillStyle = '#ffffff';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
             // 绘制签名
+            tempCtx.drawImage(this.canvas, 0, 0);
 
             // toDataURL返回
+            return tempCanvas.toDataURL(format, quality);
+        }
+
+        // 保存签名
+        saveSignature(fileName = 'signature.png') {
+            if (!this.hasSignature) {
+                alert('请签名!');
+                return;
+            }
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = this.getSignatureDataURL();
+            link.click();
+        }
+
+        // 更新画笔粗细
+        setBrushSize(size) {
+            this.brushSize = size; 
+            this.updateBrushStyle();
+        }
+
+        setBrushColor(color) {
+            this.brushColor = color;
+            this.updateBrushStyle();
+        }
+
+        updateBrushStyle() {
+            this.ctx.strokeStyle = this.brushColor;
+            this.ctx.lineWidth = this.brushSize;
         }
     }
-
-
-
 
     document.addEventListener('DOMContentLoaded', () => {
         const signatureCanvas = new SignatureCanvas('signature_canvas');    
         document.getElementById('clear_btn').addEventListener('click', () => {
             signatureCanvas.clear();
+        })
+
+        document.getElementById('brushSize').addEventListener('input', (e) => {
+            signatureCanvas.setBrushSize(e.target.value);
+            const sizePreview = document.getElementById('brush_thickness_title');
+            sizePreview.textContent = `${e.target.value}px`
+        })
+
+        // 初始化颜色选择器
+        const brushColors = [
+            '#000000', '#FF3B30', '#007AFF', '#4CD964', 
+            '#FF9500', '#FFCC00', '#5856D6', '#FF2D55',
+            '#8E8E93', '#5AC8FA'
+        ];
+
+        const brushColorEl = document.getElementById('brush_color_list');
+        let currentSelectColor = null;
+        brushColors.map(color => {
+            const colorEl = document.createElement('div');
+            colorEl.classList = 'color_option';
+            colorEl.style = `background-color: ${color}`
+            colorEl.dataset.color = color;
+
+            // 默认选中的是黑色
+            if (color === '#000000') {
+                colorEl.classList.add('active');
+                currentSelectColor = colorEl;
+            }
+
+            colorEl.addEventListener('click', (e) => {
+                // 移除之前选中的颜色类
+                if (currentSelectColor) {
+                    currentSelectColor.classList.remove('active');
+                }
+
+                // 添加当前选中的颜色类
+                colorEl.classList.add('active');
+                currentSelectColor = colorEl;
+
+                signatureCanvas.setBrushColor(color);
+                })
+            
+            brushColorEl.append(colorEl);
+        })
+
+        document.getElementById('save_btn').addEventListener('click', () => {
+            signatureCanvas.saveSignature();
         })
     })
 
