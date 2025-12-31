@@ -7,24 +7,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>left_fix_right_fit</title>
     <style>
-        .left {
+        /* 使用浮动，右边元素设置overflow: hidden触发BFC */
+        /* .left {
             float: left;
             width: 400px;
-            height: 300px;
+            height: 800px;
             background-color: orange;
         }
 
         .right {
             background-color: skyblue;
             overflow: hidden;
-            height: 100vh;
+            height: 800px;
+        } */
+
+        /** 右边元素给一个margin-left **/
+        /* .left {
+            float: left;
+            width: 400px;
+            height: 800px;
+            background-color: orange;
+        }
+
+        .right {
+            background-color: skyblue;
+            margin-left: 400px;
+            height: 800px;
+        } */
+
+        /** 使用flex布局 **/
+        /* .outer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left{
+            width: 400px;
+            height: 800px;
+            background-color: orange;
+        }
+
+        .right {
+            height: 800px;
+            background-color: skyblue;
+            flex: 1;
+        } */
+
+        /** 使用绝对定位 **/
+        .outer {
+            position: relative;
+        }
+
+        .left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 400px;
+            height: 800px;
+            background-color: orange;
+        }
+
+        .right {
+            margin-left: 400px;
+            height: 800px;
+            background-color: skyblue;
         }
     </style>
 </head>
 
 <body>
-    <div class="left"></div>
-    <div class="right"></div>
+    <div class="outer">
+        <div class="left"></div>
+        <div class="right"></div>
+    </div>
 </body>
 
 </html>
