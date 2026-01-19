@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="title">
+  </div>
+</body>
+<script>
+    // 强缓存
+    function fecthStringCache() {
+        fetch('http://localhost:3001/api/strong-cache');
+    }
+    // 协商缓存(ETag)
+    function fetchEtagCache() {
+        fetch('http://localhost:3001/api/etag-cache');
+    }
+    // 协商缓存(Last-Modified)
+    function fetchLastModifiedCache() {
+        fetch('http://localhost:3001/api/last-modified', {
+            headers: {
+                'if-none-match': '111'
+            }
+        });
+    }
+    fecthStringCache();
+    fetchEtagCache();
+    fetchLastModifiedCache();
+</script>
+</html>
