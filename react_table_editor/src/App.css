@@ -1,0 +1,15 @@
+.table {
+    border-collapse: collapse;
+}
+
+th {
+    white-space: nowrap;
+    padding: 10px 20px;
+    border: 1px solid #cccccc;
+}
+
+td {
+    padding: 10px 20px;
+    border: 1px solid #cccccc;
+    cursor: pointer;
+}
