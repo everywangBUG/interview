@@ -3,7 +3,8 @@ import React from 'react';
 // import UseState from './hook/UseState';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
-import UseRef from './hook/useRef';
+// import UseRef from './hook/useRef';
+import UseFowardRef from './hook/ForwardRef';
 
 const App = () => {
 
@@ -13,7 +14,8 @@ const App = () => {
             <UseEffect /> */}
             {/* <UseLayoutEffect /> */}
             {/* <UseReducer /> */}
-            <UseRef />
+            {/* <UseRef /> */}
+            <UseFowardRef />
         </div>
     )
 }
