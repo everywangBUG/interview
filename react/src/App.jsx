@@ -6,6 +6,7 @@ import React from 'react';
 // import UseRef from './hook/useRef';
 // import UseFowardRef from './hook/ForwardRef';
 import UseContext from './hook/UseContext';
+import Memo from './hook/Memo';
 
 const App = () => {
 
@@ -17,7 +18,8 @@ const App = () => {
             {/* <UseReducer /> */}
             {/* <UseRef /> */}
             {/* <UseFowardRef /> */}
-            <UseContext />
+            {/* <UseContext /> */}
+            <Memo />
         </div>
     )
 }
