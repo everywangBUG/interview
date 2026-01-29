@@ -4,7 +4,8 @@ import React from 'react';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
 // import UseRef from './hook/useRef';
-import UseFowardRef from './hook/ForwardRef';
+// import UseFowardRef from './hook/ForwardRef';
+import UseContext from './hook/UseContext';
 
 const App = () => {
 
@@ -15,7 +16,8 @@ const App = () => {
             {/* <UseLayoutEffect /> */}
             {/* <UseReducer /> */}
             {/* <UseRef /> */}
-            <UseFowardRef />
+            {/* <UseFowardRef /> */}
+            <UseContext />
         </div>
     )
 }

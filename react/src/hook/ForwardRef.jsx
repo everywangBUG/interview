@@ -2,15 +2,17 @@ import React from 'react';
 import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 
 const Input = forwardRef((_, ref) => {
+    const inputRef = useRef(null);
+    
     useImperativeHandle(ref, () => {
         return {
             aaa() {
-                ref.current?.focus();
+                inputRef.current?.focus();
             }
         }
-    })
+    }, [inputRef])
 
-    return <input type='text' ref={ref} />
+    return <input type='text' ref={inputRef} />
 })
 
 const ForwardRef = () => {
