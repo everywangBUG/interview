@@ -1,6 +1,4 @@
 import React from "react";
-import UseMemo from "./hook/UseMemo";
-// import UseReducer from './hook/UseReducer';
 // import UseState from './hook/UseState';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
@@ -8,7 +6,10 @@ import UseMemo from "./hook/UseMemo";
 // import UseFowardRef from './hook/ForwardRef';
 // import UseContext from './hook/UseContext';
 // import Memo from './hook/Memo';
+// import UseReducer from './hook/UseReducer';
 // import UseCallback from "./hook/UseCallback";
+// import UseMemo from "./hook/UseMemo";
+import UseDeferredValue from "./hook/UseDeferredValue";
 
 const App = () => {
   return (
@@ -22,7 +23,8 @@ const App = () => {
       {/* <UseContext /> */}
       {/* <Memo /> */}
       {/* <UseCallback /> */}
-      <UseMemo />
+      {/* <UseMemo /> */}
+      <UseDeferredValue />
     </div>
   );
 };
