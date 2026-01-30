@@ -9,7 +9,8 @@ import React from "react";
 // import UseReducer from './hook/UseReducer';
 // import UseCallback from "./hook/UseCallback";
 // import UseMemo from "./hook/UseMemo";
-import UseDeferredValue from "./hook/UseDeferredValue";
+// import UseDeferredValue from "./hook/UseDeferredValue";
+import UseTransition from "./hook/UseTransition";
 
 const App = () => {
   return (
@@ -24,7 +25,8 @@ const App = () => {
       {/* <Memo /> */}
       {/* <UseCallback /> */}
       {/* <UseMemo /> */}
-      <UseDeferredValue />
+      {/* <UseDeferredValue /> */}
+      <UseTransition />
     </div>
   );
 };
