@@ -30,6 +30,37 @@ const UseTransition = () => {
                 ? <div>正在加载......</div>
                 : list.map((it, index) => <div key={index}>{it}</div>)
         }
+        <table>
+            <thead>
+                <tr>
+                    <th>对比维度</th>
+                    <th>useTrisition</th>
+                    <th>useDeferredValue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>核心作用</th>
+                    <td>标记状态为更新可延迟</td>
+                    <td>延迟一个值的更新</td>
+                </tr>
+                <tr>
+                    <th>返回值</th>
+                    <td>[isPending, startTransition]</td>
+                    <td>延迟后的值</td>
+                </tr>
+                <tr>
+                    <th>pending状态</th>
+                    <td>直接在状态数组中提供isPending</td>
+                    <td>手动判断延迟更新的值</td>
+                </tr>
+                <tr>
+                    <th>场景</th>
+                    <td>用户操作的复杂更新，适用于颗粒度小的精确控制状态&nbsp;&nbsp;</td>
+                    <td>输入相关的值自动延迟</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 }
 
