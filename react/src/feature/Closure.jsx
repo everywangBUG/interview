@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 
 const reducer = (state, action) => {
     switch(action.type) {
@@ -14,6 +14,7 @@ const Closure = () => {
     const [count1, setCount1] = useState(0);
     const [count2, dispatch] = useReducer(reducer, 0);
     const [count3, setCount3] = useState(0);
+    const [count4, setCount4] = useState(0);
     
     useEffect(() => {
         const timer = setInterval(() => {
@@ -44,11 +45,31 @@ const Closure = () => {
         }
     }, [count3])
 
+    // 使用useRef绑定函数
+    const updateCount = () => {
+        setCount4(count4 + 1)
+    }
+
+    const countRef = useRef(updateCount);
+
+    countRef.current = updateCount;
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            countRef.current();
+        }, 2000)
+
+        return () => {
+            clearInterval(timer);
+        }
+    }, [])
+
     return <div>
             <div>闭包不能+1：{count}</div>
             <div>使用setState中的勾子的第二个参数解决+1：{count1}</div>
             <div>使用useReducer解决+1：{count2}</div>
             <div>使用useEffect的依赖项数组解决：{count3}</div>
+            <div>使用useRef绑定函数解决：{count4}</div>
         </div>
 }
 
