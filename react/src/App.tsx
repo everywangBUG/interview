@@ -11,9 +11,13 @@ import React from "react";
 // import UseMemo from "./hook/UseMemo";
 // import UseDeferredValue from "./hook/UseDeferredValue";
 // import UseTransition from "./hook/UseTransition";
-import Closure from "./feature/Closure";
+// import Closure from "./feature/Closure";
 
-const App = () => {
+interface AppProps {
+  name: string;
+}
+
+const App = (props: AppProps) => {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       {/* <UseState />
@@ -28,7 +32,8 @@ const App = () => {
       {/* <UseMemo /> */}
       {/* <UseDeferredValue /> */}
       {/* <UseTransition /> */}
-      <Closure />
+      {/* <Closure /> */}
+      <div>111</div>
     </div>
   );
 };
