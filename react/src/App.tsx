@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+// import Calendar from "./components/Control";
+import Calendar1 from "./components/UnControl";
 // import UseState from './hook/UseState';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
 // import UseRef from './hook/useRef';
-// import UseFowardRef from './hook/ForwardRef';
+// import ForwardRef from './hook/ForwardRef';
 // import UseContext from './hook/UseContext';
 // import Memo from './hook/Memo';
 // import UseReducer from './hook/UseReducer';
@@ -18,6 +20,8 @@ interface AppProps {
 }
 
 const App = (props: AppProps) => {
+  const [value, setValue] = useState<Date>(new Date());
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       {/* <UseState />
@@ -25,7 +29,7 @@ const App = (props: AppProps) => {
       {/* <UseLayoutEffect /> */}
       {/* <UseReducer /> */}
       {/* <UseRef /> */}
-      {/* <UseFowardRef /> */}
+      {/* <ForwardRef /> */}
       {/* <UseContext /> */}
       {/* <Memo /> */}
       {/* <UseCallback /> */}
@@ -33,7 +37,12 @@ const App = (props: AppProps) => {
       {/* <UseDeferredValue /> */}
       {/* <UseTransition /> */}
       {/* <Closure /> */}
-      <div>111</div>
+      {/* <Calendar defaultValue={new Date()} onChange={(date) => {
+        console.log(date, 'date');
+      }}/> */}
+      <Calendar1 value={value} onChange={
+        (date) => setValue(date)
+      } />
     </div>
   );
 };
