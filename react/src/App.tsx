@@ -14,6 +14,7 @@ import Calendar1 from "./components/UnControl";
 // import UseDeferredValue from "./hook/UseDeferredValue";
 // import UseTransition from "./hook/UseTransition";
 // import Closure from "./feature/Closure";
+import ControlAndUnControl from "./components/ControlAndUnControl";
 
 interface AppProps {
   name: string;
@@ -37,12 +38,26 @@ const App = (props: AppProps) => {
       {/* <UseDeferredValue /> */}
       {/* <UseTransition /> */}
       {/* <Closure /> */}
-      {/* <Calendar defaultValue={new Date()} onChange={(date) => {
-        console.log(date, 'date');
+      {/* 非受控组件 */}
+      {/* <Calendar
+            defaultValue={new Date()}
+            onChange={(date) => {
+            console.log(date, 'date');
       }}/> */}
-      <Calendar1 value={value} onChange={
+      {/* 受控组件 */}
+      {/* <Calendar1 value={value} onChange={
         (date) => setValue(date)
-      } />
+      } /> */}
+      {/* 同时支持受控组件和非受控组件，第一种：非受控组件 */}
+      {/* <ControlAndUnControl
+        defaultValue={new Date('2026/2/7')}
+        onChange={(date) => console.log(date)}
+      /> */}
+      {/* 同时支持受控组件和非受控组件，第二种：受控模式 */}
+      <ControlAndUnControl
+        value={value}
+        onChange={(date) => setValue(date)}
+      />
     </div>
   );
 };
