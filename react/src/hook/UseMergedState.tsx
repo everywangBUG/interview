@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect, useRef, Dispatch, SetStateAction, useCallback } from 'react';
 
 /**
  * @template T 状态值的类型
@@ -21,7 +21,7 @@ function UseMergedState<T> (
 
     const isFirstRender = useRef(true);
 
-    const [stateValue, setStateValue] = useState(() => {
+    const [stateValue, setStateValue] = useState<T>(() => {
         // 如果propsValue有值，受控模式，直接返回
         if (propsValue !== undefined) {
             return propsValue;
@@ -34,6 +34,19 @@ function UseMergedState<T> (
         }
     })
 
+    const isFunction = (value: unknown): value is Function => typeof value === 'function'; 
+
+    const setState = useCallback((value: SetStateAction<T>) => {
+        let res = isFunction(value) ? value(stateValue) : value;
+
+        // 非受控模式，更新内部状态
+        if (propsValue === undefined) {
+            setStateValue(res);
+        }
+        
+        onChange?.(res);
+    }, [stateValue])
+
     useEffect(() => {
         if (!isFirstRender.current && propsValue === undefined) {
             // 非空断言设置为setStateValue为undefined
@@ -44,7 +57,7 @@ function UseMergedState<T> (
 
     const mergeValue = propsValue === undefined ? stateValue : propsValue
     
-    return [mergeValue, setStateValue];
+    return [mergeValue, setState];
 }
 
 export default UseMergedState;

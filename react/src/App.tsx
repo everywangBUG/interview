@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import UseMergedStateFc from "./components/UseMergedStateFc";
+import UseMergedStateFc1 from "./components/UseMergedStateFc";
 // import Calendar from "./components/Control";
 // import Calendar1 from "./components/Control";
 // import UseState from './hook/UseState';
@@ -59,10 +60,16 @@ const App = (props: AppProps) => {
         value={value}
         onChange={(date) => setValue(date)}
       /> */}
-      {/* <UseMergedStateFc 
+      <UseMergedStateFc 
         value={value}
+        // onChange={(date) => setValue(date)}
         onChange={(date) => setValue(date)}
-      /> */}
+      />
+      <UseMergedStateFc1
+        value={value}
+        // onChange={(date) => setValue(date)}
+        onChange={(date) => setValue(date)}
+      />
       <UseMergedStateFc
         defaultValue={new Date()}
         onChange={(date) => console.log(date.toLocaleDateString(), 'date') }
