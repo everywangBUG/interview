@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import UseMergedStateFc from "./components/UseMergedStateFc";
 // import Calendar from "./components/Control";
-import Calendar1 from "./components/UnControl";
+// import Calendar1 from "./components/Control";
 // import UseState from './hook/UseState';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
@@ -14,7 +15,7 @@ import Calendar1 from "./components/UnControl";
 // import UseDeferredValue from "./hook/UseDeferredValue";
 // import UseTransition from "./hook/UseTransition";
 // import Closure from "./feature/Closure";
-import ControlAndUnControl from "./components/ControlAndUnControl";
+// import ControlAndUnControl from "./components/ControlAndUnControl";
 
 interface AppProps {
   name: string;
@@ -54,9 +55,17 @@ const App = (props: AppProps) => {
         onChange={(date) => console.log(date)}
       /> */}
       {/* 同时支持受控组件和非受控组件，第二种：受控模式 */}
-      <ControlAndUnControl
+      {/* <ControlAndUnControl
         value={value}
         onChange={(date) => setValue(date)}
+      /> */}
+      {/* <UseMergedStateFc 
+        value={value}
+        onChange={(date) => setValue(date)}
+      /> */}
+      <UseMergedStateFc
+        defaultValue={new Date()}
+        onChange={(date) => console.log(date.toLocaleDateString(), 'date') }
       />
     </div>
   );

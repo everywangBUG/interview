@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 
 
 interface CalendarProps {
-    value?: Date,
+    defaultValue?: Date,
     onChange: (date: Date) => void
 }
 
-const Calendar1 = (props: CalendarProps) => {
-    // 传入value，通过点击时间回调onChange设置父组件的value值，受控组件
-    const { value = new Date(), onChange } = props;
+const Calendar = (props: CalendarProps) => {
+    // 传入defaultValue值，只能由用户传入defaultValue值，不能直接传入value控制
+    const { defaultValue = new Date(), onChange } = props;
   
+    const [value, setValue] = useState<Date>(defaultValue);
+
     const changeValue = (date: Date) => {
+      setValue(date);
       onChange?.(date);
     }
     
@@ -24,4 +27,4 @@ const Calendar1 = (props: CalendarProps) => {
     )
 }
 
-export default Calendar1;
+export default Calendar;
