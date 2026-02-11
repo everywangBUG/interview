@@ -1,0 +1,26 @@
+.calendar {
+    width: 300px;
+    height: 250px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button {
+    margin: 0
+}
+
+.days {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.empty, .day {
+    width: calc(300px / 7);
+    text-align: center;
+    line-height: 30px;
+}

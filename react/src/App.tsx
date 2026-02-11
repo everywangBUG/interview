@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import UseMergedStateFc from "./components/UseMergedStateFc";
-import UseMergedStateFc1 from "./components/UseMergedStateFc";
+// import UseMergedStateFc from "./components/UseMergedStateFc";
+// import UseMergedStateFc1 from "./components/UseMergedStateFc";
 // import Calendar from "./components/Control";
 // import Calendar1 from "./components/Control";
+import MiniCalendar from "./components/MiniCalendar.tsx/MiniCalendar";
 // import UseState from './hook/UseState';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
@@ -60,20 +61,21 @@ const App = (props: AppProps) => {
         value={value}
         onChange={(date) => setValue(date)}
       /> */}
-      <UseMergedStateFc 
+      {/* <UseMergedStateFc 
         value={value}
         // onChange={(date) => setValue(date)}
         onChange={(date) => setValue(date)}
-      />
-      <UseMergedStateFc1
+      /> */}
+      {/* <UseMergedStateFc1
         value={value}
         // onChange={(date) => setValue(date)}
         onChange={(date) => setValue(date)}
-      />
-      <UseMergedStateFc
+      /> */}
+      {/* <UseMergedStateFc
         defaultValue={new Date()}
         onChange={(date) => console.log(date.toLocaleDateString(), 'date') }
-      />
+      /> */}
+      <MiniCalendar />
     </div>
   );
 };
