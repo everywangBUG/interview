@@ -1,8 +1,14 @@
 import React, { ReactElement, useState } from 'react';
 import './MiniCalendar.css';
 
-const MiniCalendar = () => {
-    const [date, setDate] = useState(new Date());
+interface MiniCalendarProps {
+    defaultValue?: Date,
+    onChange?: (date: Date) => void
+}
+
+const MiniCalendar = (props: MiniCalendarProps) => {
+    const { defaultValue = new Date(), onChange } = props;
+    const [date, setDate] = useState(defaultValue);
 
     const handlePreDate = () => {
         setDate(new Date(date.getFullYear(), date.getMonth() - 1, date.getDate()));
@@ -23,7 +29,7 @@ const MiniCalendar = () => {
 
         // 渲染空格
         Array.from({length: firstDayOfWeek}, (_, index) => {
-            days.push(<div key={`empty-index`} className='empty'></div>)
+            days.push(<div key={`empty-${index}`} className='empty'></div>)
         })
 
         // 渲染当月天数

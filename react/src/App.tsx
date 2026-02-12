@@ -75,7 +75,10 @@ const App = (props: AppProps) => {
         defaultValue={new Date()}
         onChange={(date) => console.log(date.toLocaleDateString(), 'date') }
       /> */}
-      <MiniCalendar />
+      <MiniCalendar
+        defaultValue={new Date()}
+        onChange={(date) => alert(date)}
+      />
     </div>
   );
 };
