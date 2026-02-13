@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // import UseMergedStateFc from "./components/UseMergedStateFc";
 // import UseMergedStateFc1 from "./components/UseMergedStateFc";
 // import Calendar from "./components/Control";
 // import Calendar1 from "./components/Control";
-import MiniCalendar from "./components/MiniCalendar.tsx/MiniCalendar";
+import MiniCalendar from './components/MiniCalendar.tsx/MiniCalendar';
 // import UseState from './hook/UseState';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
@@ -23,8 +23,21 @@ interface AppProps {
   name: string;
 }
 
+export interface MiniCalendarRef {
+  getDate: () => Date,
+  setDate: (date: Date) => void
+}
+
 const App = (props: AppProps) => {
   const [value, setValue] = useState<Date>(new Date());
+  const miniCalendarRef = useRef<MiniCalendarRef>(null);
+
+  useEffect(() => {
+    console.log(miniCalendarRef.current?.getDate(), 'getDate');
+    setTimeout(() => {
+      miniCalendarRef?.current?.setDate(new Date(2027, 1, 1));
+    }, 3000)
+  }, []);
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -75,9 +88,14 @@ const App = (props: AppProps) => {
         defaultValue={new Date()}
         onChange={(date) => console.log(date.toLocaleDateString(), 'date') }
       /> */}
+      {/* <MiniCalendar
+        defaultValue={new Date()}
+        onChange={(date) => alert(`${date.getFullYear()}年${date.getMonth()}月${date.getDate()}日`)}
+      /> */}
       <MiniCalendar
         defaultValue={new Date()}
-        onChange={(date) => alert(date)}
+        onChange={(date) => alert(`${date.getFullYear()}年${date.getMonth()}月${date.getDate()}日`)}
+        ref={miniCalendarRef}
       />
     </div>
   );

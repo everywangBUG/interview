@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { forwardRef, ReactElement, useImperativeHandle, useState } from 'react';
 import './MiniCalendar.css';
 
 interface MiniCalendarProps {
@@ -6,9 +6,21 @@ interface MiniCalendarProps {
     onChange?: (date: Date) => void
 }
 
-const MiniCalendar = (props: MiniCalendarProps) => {
+const MiniCalendar = forwardRef((props: MiniCalendarProps, ref) => {
     const { defaultValue = new Date(), onChange } = props;
     const [date, setDate] = useState(defaultValue);
+
+    useImperativeHandle(ref, () => {
+        return {
+            getDate: () => {
+                return date;
+            },
+            setDate: (date: Date) => {
+                console.log(111)
+                setDate(date);
+            }
+        }
+    });
 
     const handlePreDate = () => {
         setDate(new Date(date.getFullYear(), date.getMonth() - 1, date.getDate()));
@@ -34,7 +46,16 @@ const MiniCalendar = (props: MiniCalendarProps) => {
 
         // 渲染当月天数
         Array.from({length: daysOfMonth}, (_, index) => {
-            days.push(<div key={index} className='day'>{index  + 1}</div>)
+            const handleDayClick = () => {
+                onChange?.(new Date(date.getFullYear(), date.getMonth(), index + 1));
+                setDate(new Date(date.getFullYear(), date.getMonth(), index + 1));
+            }
+            
+            if (index + 1 === date.getDate()) {
+                days.push(<div key={index} className='day selected' onClick={handleDayClick}>{index + 1}</div>);
+            } else {
+                days.push(<div key={index} className='day' onClick={handleDayClick}>{index  + 1}</div>);
+            }
         })
 
         return days;
@@ -61,6 +82,6 @@ const MiniCalendar = (props: MiniCalendarProps) => {
             </>
         </div>
     </div>
-}
+});
 
 export default MiniCalendar;
