@@ -1,13 +1,19 @@
 import React, { forwardRef, ReactElement, useImperativeHandle, useState } from 'react';
 import './MiniCalendar.css';
+import { MiniCalendarRef } from '../../App';
 
 interface MiniCalendarProps {
     defaultValue?: Date,
-    onChange?: (date: Date) => void
+    onChange?: (date: Date) => void,
+    ref?: React.Ref<MiniCalendarRef>
 }
 
-const MiniCalendar = forwardRef((props: MiniCalendarProps, ref) => {
-    const { defaultValue = new Date(), onChange } = props;
+const MiniCalendar = (props: MiniCalendarProps) => {
+    const {
+            defaultValue = new Date(),
+            onChange,
+            ref
+    } = props;
     const [date, setDate] = useState(defaultValue);
 
     useImperativeHandle(ref, () => {
@@ -82,6 +88,6 @@ const MiniCalendar = forwardRef((props: MiniCalendarProps, ref) => {
             </>
         </div>
     </div>
-});
+};
 
 export default MiniCalendar;
