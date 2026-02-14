@@ -1,8 +1,10 @@
 import React, { forwardRef, ReactElement, useImperativeHandle, useState } from 'react';
 import './MiniCalendar.css';
 import { MiniCalendarRef } from '../../App';
+import { useControllableValue } from 'ahooks';
 
 interface MiniCalendarProps {
+    value?: Date,
     defaultValue?: Date,
     onChange?: (date: Date) => void,
     ref?: React.Ref<MiniCalendarRef>
@@ -14,7 +16,9 @@ const MiniCalendar = (props: MiniCalendarProps) => {
             onChange,
             ref
     } = props;
-    const [date, setDate] = useState(defaultValue);
+    const [date, setDate] = useControllableValue(props, {
+        defaultValue: new Date()
+    });
 
     useImperativeHandle(ref, () => {
         return {
@@ -22,7 +26,6 @@ const MiniCalendar = (props: MiniCalendarProps) => {
                 return date;
             },
             setDate: (date: Date) => {
-                console.log(111)
                 setDate(date);
             }
         }
@@ -53,7 +56,7 @@ const MiniCalendar = (props: MiniCalendarProps) => {
         // 渲染当月天数
         Array.from({length: daysOfMonth}, (_, index) => {
             const handleDayClick = () => {
-                onChange?.(new Date(date.getFullYear(), date.getMonth(), index + 1));
+                // onChange?.(new Date(date.getFullYear(), date.getMonth(), index + 1));
                 setDate(new Date(date.getFullYear(), date.getMonth(), index + 1));
             }
             

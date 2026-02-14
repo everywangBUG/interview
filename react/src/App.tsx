@@ -88,15 +88,18 @@ const App = (props: AppProps) => {
         defaultValue={new Date()}
         onChange={(date) => console.log(date.toLocaleDateString(), 'date') }
       /> */}
+      <MiniCalendar
+        value={value}
+        onChange={(date) => {
+          setValue(date);
+          alert(`${date.getFullYear()}年${date.getMonth()}月${date.getDate()}日`)
+        }}
+      />
       {/* <MiniCalendar
         defaultValue={new Date()}
         onChange={(date) => alert(`${date.getFullYear()}年${date.getMonth()}月${date.getDate()}日`)}
-      /> */}
-      <MiniCalendar
-        defaultValue={new Date()}
-        onChange={(date) => alert(`${date.getFullYear()}年${date.getMonth()}月${date.getDate()}日`)}
         ref={miniCalendarRef}
-      />
+      /> */}
     </div>
   );
 };
