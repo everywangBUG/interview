@@ -1,0 +1,17 @@
+.month_calendar {
+    &_weeks_list {
+        display: flex;
+        box-sizing: border-box;
+        border-bottom: 1px solid #ccc;
+
+        &_item {
+            flex: 1;
+            padding: 8px 64px 8px 8px;
+            color: #ccc;
+            text-align: left;
+            // 每个列表项平均分配剩余空间
+            flex: 1;
+        }
+
+    }
+}
