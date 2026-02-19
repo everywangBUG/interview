@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <Calendar date={dayjs('2026/1/2')}/>
+      <Calendar date={dayjs('2026/2/2')}/>
     </>
   )
 }
