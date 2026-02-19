@@ -2,7 +2,6 @@
     &_weeks_list {
         display: flex;
         box-sizing: border-box;
-        border-bottom: 1px solid #ccc;
 
         &_item {
             flex: 1;
@@ -13,5 +12,25 @@
             flex: 1;
         }
 
+    }
+
+    &_all_days {
+        &_row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &_col {
+                flex: 1;
+                padding: 8px 56px 56px 8px;
+                text-align: center;
+                border: 0.5px solid #ccc;
+                color: #ccc;
+            }
+
+            &_current {
+                color: #000000;
+            }
+        }
     }
 }
