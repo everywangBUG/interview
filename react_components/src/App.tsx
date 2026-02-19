@@ -5,7 +5,23 @@ function App() {
 
   return (
     <>
-      <Calendar date={dayjs('2026/2/2')}/>
+      <Calendar
+        date={dayjs(new Date())}
+        // dateRanger={(value) => {
+        //   return <div>
+        //     <p style={{backgroundColor: 'yellow', height: '50px'}}>{value.format('YYYY-MM-DD')}</p>
+        //   </div>
+        // }}
+        // dateInnerContent={(value) => {
+        //     return <div>
+        //       <p style={{backgroundColor: 'red', height: '25px'}}>{value.year()}</p>
+        //     </div>
+        // }}
+        locale='en-US'
+        onChange={(date) => {
+          alert(date.format('YYYY-MM-DD'))
+        }}
+      />
     </>
   )
 }

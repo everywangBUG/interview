@@ -1,36 +1,48 @@
 .month_calendar {
-    &_weeks_list {
-        display: flex;
-        box-sizing: border-box;
+  &_weeks_list {
+    display: flex;
+    box-sizing: border-box;
 
-        &_item {
-            flex: 1;
-            padding: 8px 64px 8px 8px;
-            color: #ccc;
-            text-align: left;
-            // 每个列表项平均分配剩余空间
-            flex: 1;
-        }
-
+    &_item {
+      flex: 1;
+      padding: 8px 64px 8px 8px;
+      color: #ccc;
+      text-align: left;
+      // 每个列表项平均分配剩余空间
+      flex: 1;
     }
+  }
 
-    &_all_days {
-        &_row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+  &_all_days {
+    &_row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-            &_col {
-                flex: 1;
-                padding: 8px 56px 56px 8px;
-                text-align: center;
-                border: 0.5px solid #ccc;
-                color: #ccc;
-            }
+      &_col {
+        flex: 1;
+        text-align: center;
+        border: 0.5px solid #ccc;
+        color: #ccc;
+        padding: 8px 48px 16px 8px;
+      }
 
-            &_current {
-                color: #000000;
-            }
-        }
+      &_current {
+        color: #000000;
+      }
+
+      &_date {
+        cursor: pointer;
+      }
+      &_value {
+        position: relative;
+      }
+      &_selected {
+        width: 23px;
+        height: 23px;
+        background-color: skyblue;
+        border-radius: 50%;
+      }
     }
+  }
 }

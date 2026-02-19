@@ -1,11 +1,14 @@
 import { Dayjs } from 'dayjs';
-import type { CalendarProps } from './Calendar';
-import './MonthCalendar.scss';  
+import { CalendarProps, LocaleContext } from './Calendar';
+import './MonthCalendar.scss';
+import { useContext } from 'react';
+import allLocales from './locale';
+import cs from 'classnames';
 
-const WEEK_LIST = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const WEEK_LIST = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 interface MonthCalendarProps extends CalendarProps {
-
+    selectHandler?: (date: Dayjs) => void
 }
 
 const getAllDays = (date: Dayjs): Array<Array<{date: Dayjs, currentMonth: boolean}>>  => {
@@ -46,27 +49,57 @@ const getAllDays = (date: Dayjs): Array<Array<{date: Dayjs, currentMonth: boolea
     return days;
 }
 
+const renderDays = (days:Array<Array<{date: Dayjs, currentMonth: boolean}>>, props: MonthCalendarProps) => {
+    const { date, dateRanger, dateInnerContent, selectHandler } = props;
+
+    return days.map((row, rowIndex) => {
+        return <div key={rowIndex} className='month_calendar_all_days_row'>
+            {
+                row.map((col, colIndex) => {
+                    return <div
+                            key={colIndex}
+                            className={'month_calendar_all_days_row_col' + ' ' + (col.currentMonth ? 'month_calendar_all_days_row_current' : '')}
+                            onClick={() => selectHandler?.(col.date)}
+                            >
+                                <div className='month_calendar_all_days_row_date'>
+                                    {
+                                        dateRanger
+                                            ? dateRanger(date)
+                                            : (
+                                                <>
+                                                <div
+                                                    className={cs(
+                                                        'month_calendar_all_days_row_value',
+                                                        `${col.date.format('YYYY-MM-DD') === date.format('YYYY-MM-DD') ? 'month_calendar_all_days_row_selected' : ''}`
+                                                    )}
+                                                >
+                                                    {col.date.format('DD')}
+                                                </div>
+                                                {
+                                                    dateInnerContent && 
+                                                    <div className='month_calendar_all_days_row_content'>
+                                                        {dateInnerContent(date)} 
+                                                    </div>
+                                                }
+                                                </>
+                                              )
+                                    }
+                                </div>
+                            </div>
+                })
+            }
+            </div>
+    })
+}
+
 const MonthCalendar = (props: MonthCalendarProps) => {
     const { date } = props;
 
-    const days = getAllDays(date);
+    const localeContext = useContext(LocaleContext);
 
-    const renderDays = (days:Array<Array<{date: Dayjs, currentMonth: boolean}>>) => {
-        return days.map((row, rowIndex) => {
-            return <div key={rowIndex} className='month_calendar_all_days_row'>
-                {
-                    row.map((col, colIndex) => {
-                        return <div
-                                key={colIndex}
-                                className={'month_calendar_all_days_row_col' + ' ' + (col.currentMonth ? 'month_calendar_all_days_row_current' : '')}
-                                >
-                                    {col.date.format('DD')}
-                                </div>
-                    })
-                }
-                </div>
-        })
-    }
+    const CalendarLocal = allLocales[localeContext.locale]
+
+    const days = getAllDays(date);
 
     return <div className='month_calendar'>
         <div className='month_calendar_weeks_list'>
@@ -76,14 +109,14 @@ const MonthCalendar = (props: MonthCalendarProps) => {
                         key={`${it}-${idx}`}
                         className='month_calendar_weeks_list_item'
                     >
-                        {it}
+                        {CalendarLocal.week[it]}
                     </div>
                 })
             }
         </div>
         <div className='month_calendar_all_days'>
             {
-                renderDays(days)
+                renderDays(days, props)
             }
         </div>
     </div>
