@@ -8,7 +8,9 @@ import cs from 'classnames';
 const WEEK_LIST = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 interface MonthCalendarProps extends CalendarProps {
-    selectHandler?: (date: Dayjs) => void
+    selectHandler?: (date: Dayjs) => void,
+    curMonth?: Dayjs,
+    date: Dayjs
 }
 
 const getAllDays = (date: Dayjs): Array<Array<{date: Dayjs, currentMonth: boolean}>>  => {
@@ -50,7 +52,7 @@ const getAllDays = (date: Dayjs): Array<Array<{date: Dayjs, currentMonth: boolea
 }
 
 const renderDays = (days:Array<Array<{date: Dayjs, currentMonth: boolean}>>, props: MonthCalendarProps) => {
-    const { date, dateRanger, dateInnerContent, selectHandler } = props;
+    const { date, dateRanger, dateInnerContent, selectHandler, curMonth } = props;
 
     return days.map((row, rowIndex) => {
         return <div key={rowIndex} className='month_calendar_all_days_row'>
@@ -70,7 +72,10 @@ const renderDays = (days:Array<Array<{date: Dayjs, currentMonth: boolean}>>, pro
                                                 <div
                                                     className={cs(
                                                         'month_calendar_all_days_row_value',
-                                                        `${col.date.format('YYYY-MM-DD') === date.format('YYYY-MM-DD') ? 'month_calendar_all_days_row_selected' : ''}`
+                                                        `${(col.date.format('YYYY-MM-DD') === date?.format('YYYY-MM-DD') && curMonth?.format('MM') === date.format('MM'))
+                                                            ? 'month_calendar_all_days_row_selected'
+                                                            : ''
+                                                        }`
                                                     )}
                                                 >
                                                     {col.date.format('DD')}

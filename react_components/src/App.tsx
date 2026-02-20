@@ -6,7 +6,8 @@ function App() {
   return (
     <>
       <Calendar
-        date={dayjs(new Date())}
+        // date={dayjs(new Date())}
+        defaultValue={dayjs('2026/1/2')}
         // dateRanger={(value) => {
         //   return <div>
         //     <p style={{backgroundColor: 'yellow', height: '50px'}}>{value.format('YYYY-MM-DD')}</p>
@@ -17,7 +18,7 @@ function App() {
         //       <p style={{backgroundColor: 'red', height: '25px'}}>{value.year()}</p>
         //     </div>
         // }}
-        locale='en-US'
+        locale='zh-CN'
         onChange={(date) => {
           alert(date.format('YYYY-MM-DD'))
         }}

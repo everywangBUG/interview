@@ -5,9 +5,11 @@ import MonthCalendar from './MonthCalendar';
 import dayjs, { Dayjs } from 'dayjs';
 import cs from 'classnames'
 import { createContext, useState } from 'react';
+import { useControllableValue } from 'ahooks';
 
 export interface CalendarProps {
-    date: Dayjs;
+    date?: Dayjs;
+    defaultValue?: Dayjs;
     style?: CSSProperties;
     className?: string | string[];
     // 定制的日期显示，完全覆盖掉日期单元格
@@ -32,25 +34,28 @@ const Calendar = (props: CalendarProps) => {
         className,
         style,
         locale,
-        date,
         onChange
     } = props;
     const classNames = cs('calendar', className);
 
-    const [curDate, setCurDate] = useState<Dayjs>(date)
+    const [curDate, setCurDate] = useControllableValue<Dayjs>(props, {
+        defaultValue: dayjs()
+    })
+
+    const [curMonth] = useState<Dayjs>(curDate);
 
     const selectHandler = (date: Dayjs) => {
         setCurDate?.(date);
         onChange?.(date)
     }
 
-    const todayHandler = (date: Dayjs) => {
-        setCurDate?.(date);
-        onChange?.(date);
+    const todayHandler = () => {
+        setCurDate?.(dayjs(new Date()));
+        onChange?.(dayjs(new Date()));
     }
     
     const preHandler = () => {
-        setCurDate(dayjs(curDate).subtract(-1, 'month'));
+        setCurDate(dayjs(curDate).subtract(1, 'month'));
     }
 
     const postHandler = () => {
@@ -60,8 +65,8 @@ const Calendar = (props: CalendarProps) => {
     return (
         <LocaleContext.Provider value={{locale: locale || navigator.language}}>
             <div className={classNames} style={style}>
-                <Header {...props} todayHandler={todayHandler} preHandler={preHandler} postHandler={postHandler} curMonth={curDate}/>
-                <MonthCalendar {...props} date={curDate} selectHandler={selectHandler}/>
+                <Header {...props} todayHandler={todayHandler} preHandler={preHandler} postHandler={postHandler} curMonth={curDate} />
+                <MonthCalendar {...props} date={curDate} curMonth={curMonth} selectHandler={selectHandler} />
             </div>
         </LocaleContext.Provider>
     )

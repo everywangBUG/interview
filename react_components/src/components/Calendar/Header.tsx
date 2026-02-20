@@ -3,11 +3,10 @@ import './Header.scss';
 import { useContext } from "react";
 import { LocaleContext } from "./Calendar";
 import allLocales from "./locale";
-import dayjs from "dayjs";
 
 interface HeaderProps {
     curMonth: Dayjs;
-    todayHandler: (date: Dayjs) => void;
+    todayHandler: () => void;
     preHandler: () => void;
     postHandler: () => void;
 }
@@ -25,7 +24,7 @@ const Header = (props: HeaderProps) => {
             <div>{curMonth.format(CalendarLocal.formatMonth)}</div>
             <button className='header_date_post' onClick={postHandler}>&gt;</button>
         </div>
-        <button className='header_today' onClick={() => todayHandler(dayjs(new Date()))}>
+        <button className='header_today' onClick={() => todayHandler()}>
             {CalendarLocal.today}
         </button>
     </div>
