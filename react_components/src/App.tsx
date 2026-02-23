@@ -1,5 +1,6 @@
-import { IconAdd } from "./components/Icon/IconAdd"
-import { IconEmail } from "./components/Icon/IconEmail"
+// import { IconAdd } from "./components/Icon/IconAdd"
+// import { IconEmail } from "./components/Icon/IconEmail"
+import Space from "./components/Space/Space"
 // import dayjs from 'dayjs'
 // import Calendar from './components/Calendar/Calendar'
 
@@ -25,8 +26,13 @@ function App() {
           alert(date.format('YYYY-MM-DD'))
         }}
       /> */}
-      <IconAdd size={['100px', '100px']} spin={true} />
-      <IconEmail size={['100px', '100px']} />
+      {/* <IconAdd size={['100px', '100px']} spin={true} />
+      <IconEmail size={['100px', '100px']} /> */}
+      <Space direction='vertical' size={['large', 'small']} wrap={true}>
+        <button>按钮1</button>
+        <button>按钮2</button>
+        <button>按钮3</button>
+      </Space>
     </>
   )
 }
