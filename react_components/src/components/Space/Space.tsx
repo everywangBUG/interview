@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import cs from 'classnames';
 import './Space.scss';
 
@@ -20,12 +20,17 @@ const spaceSize = {
     large: 24
 }
 
+const getNumberSize = (size: SizeType) => {
+    return typeof size === 'string' ? spaceSize[size] : size || 0
+}
+
 const Space: React.FC<SpaceProps> = props => {
     const {
         className,
         style,
         direction = 'horizontal',
         align,
+        size,
         split,
         wrap = 'true',
         children,
@@ -42,6 +47,20 @@ const Space: React.FC<SpaceProps> = props => {
         </div>
     })
 
+    const [horizontalSize, verticalSize] = useMemo(() =>
+        (Array.isArray(size) ? size : ([size, size] as [SizeType, SizeType]).map(item => getNumberSize(item))),
+        [size]
+    );
+
+    const otherStyle: React.CSSProperties = {};
+
+    otherStyle.rowGap = horizontalSize;
+    otherStyle.columnGap = verticalSize;
+
+    if (wrap) {
+        otherStyle.flexWrap = 'wrap';
+    }
+    
     const mergeAlign = direction === 'horizontal' && align === undefined ? 'center' : align;
     const cn = cs(
         'space',
@@ -52,7 +71,7 @@ const Space: React.FC<SpaceProps> = props => {
         className
     )
 
-    return <div className={cn} style={style} {...otherProps}>
+    return <div className={cn} style={{ ...style, ...otherStyle}} {...otherProps}>
         {nodes}
     </div>
 }

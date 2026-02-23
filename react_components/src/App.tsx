@@ -4,6 +4,8 @@ import Space from "./components/Space/Space"
 // import dayjs from 'dayjs'
 // import Calendar from './components/Calendar/Calendar'
 
+import { Space as SpaceAntd } from 'antd';
+
 function App() {
 
   return (
@@ -28,11 +30,17 @@ function App() {
       /> */}
       {/* <IconAdd size={['100px', '100px']} spin={true} />
       <IconEmail size={['100px', '100px']} /> */}
-      <Space direction='vertical' size={['large', 'small']} wrap={true}>
+      <Space direction='vertical' size={['large', 240]} wrap={true}>
         <button>按钮1</button>
         <button>按钮2</button>
         <button>按钮3</button>
       </Space>
+
+      <SpaceAntd direction='vertical' size={'large'}>
+        <button>按钮1</button>
+        <button>按钮2</button>
+        <button>按钮3</button>
+      </SpaceAntd>
     </>
   )
 }
