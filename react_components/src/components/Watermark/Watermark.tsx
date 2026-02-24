@@ -1,6 +1,6 @@
 import React, { CSSProperties, ReactNode, useRef } from 'react';
 
-interface WatermarkProps {
+export interface WatermarkProps {
     style?: CSSProperties;
     className?: string;
     width?: number;
