@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import cs from 'classnames';
 import './Space.scss';
+import { ConfigContext } from './ConfigProvider';
 
 export interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
@@ -25,17 +26,22 @@ const getNumberSize = (size: SizeType) => {
 }
 
 const Space: React.FC<SpaceProps> = props => {
+    console.log(React.useContext(ConfigContext), 'space')
+    const { space } = React.useContext(ConfigContext);
+
     const {
         className,
         style,
         direction = 'horizontal',
         align,
-        size,
+        size = space?.size || 'samll',
         split,
         wrap = 'true',
         children,
         ...otherProps
     } = props;
+
+    console.log(split, 'split');
 
     const childrenNodes = React.Children.toArray(children)
 
@@ -44,18 +50,22 @@ const Space: React.FC<SpaceProps> = props => {
 
         return <div key={key} className='space-item'>
             {child}
+            {
+                i < childrenNodes.length - 1 && split && <span className={`${className}-split`} style={style}>
+                    {split}
+                </span>
+            }
         </div>
     })
 
     const [horizontalSize, verticalSize] = useMemo(() =>
         (Array.isArray(size) ? size : ([size, size] as [SizeType, SizeType]).map(item => getNumberSize(item))),
-        [size]
-    );
+    [size]);
 
     const otherStyle: React.CSSProperties = {};
 
-    otherStyle.rowGap = horizontalSize;
-    otherStyle.columnGap = verticalSize;
+    otherStyle.rowGap = getNumberSize(horizontalSize);
+    otherStyle.columnGap = getNumberSize(verticalSize);
 
     if (wrap) {
         otherStyle.flexWrap = 'wrap';
