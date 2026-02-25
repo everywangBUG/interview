@@ -31,7 +31,7 @@ const getMergedOptions = (o: Partial<WatermarkOptions>) => {
     width: toNumber(options.width!, (options.image ? defaultOptions.width : undefined)!),
     // options的height和undefined isNumber
     height: toNumber(options.height!, undefined!),
-    getContainer: options.getContainer,
+    getContainer: options.getContainer || defaultOptions.getContainer,
     // 和默认的gap isNumber
     gap: [
       toNumber(options.gap?.[0]!, defaultOptions.gap[0]), 
@@ -96,7 +96,7 @@ async function getCanvasData (options: Required<WatermarkOptions>)
       ctx?.rotate(rotateAngle);
     }
 
-    function mesureTextSize (
+    function measureTextSize (
       ctx: CanvasRenderingContext2D,
       content: string[],
       rotate: number) {
@@ -154,11 +154,11 @@ async function getCanvasData (options: Required<WatermarkOptions>)
 
       ctx.font = `${fontWeight} ${realFontSize}px ${fontFamily}`;
       // 测量字体
-      const mersureFontSize = mesureTextSize(ctx, [...content], rotate);
+      const measureFontSize = measureTextSize(ctx, [...content], rotate);
 
       // 获取canvas的宽高，没有传计算宽高并设置
-      const width = options.width || mersureFontSize.width;
-      const height = options.width || mersureFontSize.height;
+      const width = options.width || measureFontSize.width;
+      const height = options.width || measureFontSize.height;
 
       configCanvas({ width, height })
 
@@ -168,17 +168,17 @@ async function getCanvasData (options: Required<WatermarkOptions>)
       ctx.textBaseline = 'top';
       
       [...content].forEach((item, index) => {
-        const { height: lineHeight, width: lineWidth } = mersureFontSize.lineSize[index];
+        const { height: lineHeight, width: lineWidth } = measureFontSize.lineSize[index];
 
         // 行高一半的起始位置
         const xStartPoint = -lineWidth / 2;
-        const yStartPoint = -(options.height || mersureFontSize.originHeight) / 2 + lineHeight * index;
+        const yStartPoint = -(options.height || measureFontSize.originHeight) / 2 + lineHeight * index;
 
         ctx.fillText(
           item,
           xStartPoint,
           yStartPoint,
-          options.width || mersureFontSize.originWidth
+          options.width || measureFontSize.originWidth
         )
       })
 
@@ -234,20 +234,21 @@ export function useWatermark (params: WatermarkOptions) {
   const mergedOptions = getMergedOptions(options);
 
   // ref保存watermarkDiv
-  const watermarkDiv = useRef<HTMLDivElement>();
-
+  const watermarkDiv = useRef<HTMLDivElement>(null);
+  
   // 获取合并后的容器
   const container = mergedOptions.getContainer();
 
+
   // 画出水印标签
   function drawWatermark () {
-    if (!watermarkDiv.current) {
+    if (!container) {
       return;
     }
 
     const { gap, zIndex } = mergedOptions;
 
-    getCanvasData(mergedOptions).then((width, height, base64Url) => {
+    getCanvasData(mergedOptions).then(({width, height, base64Url}) => {
       const wmStyle = `
         width: 100%;
         height: 100%;
@@ -278,7 +279,7 @@ export function useWatermark (params: WatermarkOptions) {
   // 根据options的变化触发重绘
   useEffect(() => {
     drawWatermark();
-  }, [options])
+  }, [options]);
 
   return {
     generateWatermark: (newOptions: Partial<WatermarkOptions>) => {

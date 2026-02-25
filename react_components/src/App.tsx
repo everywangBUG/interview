@@ -5,6 +5,8 @@
 // import dayjs from 'dayjs'
 // import Calendar from './components/Calendar/Calendar'
 
+import Watermark from "./components/Watermark/Watermark"
+
 // import { ConfigProvider, Space as SpaceAntd } from 'antd';
 // import { SpaceContextProvider } from "antd/es/space/context";
 
@@ -75,6 +77,22 @@ function App() {
     //   </ConfigProvider>
     // </>
     <>
+      <Watermark
+        gap={[2,1]}
+        width={100}
+        fontStyle={{color: 'red' }}
+        getContainer={() => document.body}
+        content={'水印水印'}
+        rotate={65}
+        className={'watermark'}
+        // image={'https://picx.zhimg.com/v2-ab23d513fab6abd0a27cda9ba9676383_720w.jpg?source=172ae18b'}
+        zIndex={-1}
+      >
+        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+      </Watermark>
     </>
   )
 }
