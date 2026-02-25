@@ -239,6 +239,7 @@ export function useWatermark (params: WatermarkOptions) {
   // 获取合并后的容器
   const container = mergedOptions.getContainer();
 
+  const mutationObserver = useRef<MutationObserver>(null);
 
   // 画出水印标签
   function drawWatermark () {
@@ -249,12 +250,15 @@ export function useWatermark (params: WatermarkOptions) {
     const { gap, zIndex } = mergedOptions;
 
     getCanvasData(mergedOptions).then(({width, height, base64Url}) => {
+      const offsetLeft = mergedOptions.offset[0] + 'px';
+      const offsetTop = mergedOptions.offset[1] + 'px';
+      
       const wmStyle = `
-        width: 100%;
-        height: 100%;
+        width: calc(100% - ${offsetLeft});
+        height: calc(100% - ${offsetTop});
         position: absolute;
-        top: 0;
-        left: 0;
+        top: ${offsetTop};
+        left: ${offsetLeft};
         bottom: 0;
         right: 0;
         pointer-events: none;
@@ -273,6 +277,36 @@ export function useWatermark (params: WatermarkOptions) {
       }
 
       watermarkDiv.current?.setAttribute('style', wmStyle.trim());
+
+      if (container) {
+        // 观察者停止观察变动
+        mutationObserver.current?.disconnect();
+
+        mutationObserver.current = new MutationObserver((mutations) => {
+          // 判断是手动删除了元素
+          const isChanged = mutations.some(mutation => {
+            let flag = false;
+            console.log(mutation)
+            if (mutation.removedNodes.length) {
+              flag = Array.from(mutation.removedNodes).some((node) => node === watermarkDiv.current);
+            }
+            if (mutation.type === 'attributes' && mutation.target === watermarkDiv.current) {
+              flag = true;
+            }
+            return flag;
+          });
+          if (isChanged) {
+            watermarkDiv.current = undefined;
+            drawWatermark();
+          }
+        });
+
+        mutationObserver.current.observe(container, {
+          attributes: true,
+          subtree: true,
+          childList: true
+        })
+      }
     })
   }
 

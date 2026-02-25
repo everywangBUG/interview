@@ -85,6 +85,7 @@ function App() {
         content={'水印水印'}
         rotate={65}
         className={'watermark'}
+        offset={[10, 10]}
         // image={'https://picx.zhimg.com/v2-ab23d513fab6abd0a27cda9ba9676383_720w.jpg?source=172ae18b'}
         zIndex={-1}
       >
