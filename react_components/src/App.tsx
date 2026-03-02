@@ -5,6 +5,7 @@
 // import dayjs from 'dayjs'
 // import Calendar from './components/Calendar/Calendar'
 
+import LazyLoadDemo from "./components/LazyLoadDemo/LazyLoadDemo"
 import Watermark from "./components/Watermark/Watermark"
 
 // import { ConfigProvider, Space as SpaceAntd } from 'antd';
@@ -76,24 +77,27 @@ function App() {
     //     </SpaceAntd>
     //   </ConfigProvider>
     // </>
+    // <>
+    //   <Watermark
+    //     gap={[2,1]}
+    //     width={100}
+    //     fontStyle={{color: 'red' }}
+    //     getContainer={() => document.body}
+    //     content={'水印水印'}
+    //     rotate={65}
+    //     className={'watermark'}
+    //     offset={[10, 10]}
+    //     // image={'https://picx.zhimg.com/v2-ab23d513fab6abd0a27cda9ba9676383_720w.jpg?source=172ae18b'}
+    //     zIndex={-1}
+    //   >
+    //     <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+    //     <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+    //     <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+    //     <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
+    //   </Watermark>
+    // </>
     <>
-      <Watermark
-        gap={[2,1]}
-        width={100}
-        fontStyle={{color: 'red' }}
-        getContainer={() => document.body}
-        content={'水印水印'}
-        rotate={65}
-        className={'watermark'}
-        offset={[10, 10]}
-        // image={'https://picx.zhimg.com/v2-ab23d513fab6abd0a27cda9ba9676383_720w.jpg?source=172ae18b'}
-        zIndex={-1}
-      >
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
-      </Watermark>
+      <LazyLoadDemo />
     </>
   )
 }
