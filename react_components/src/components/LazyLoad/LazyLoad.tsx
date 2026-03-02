@@ -30,15 +30,26 @@ const LazyLoad: FC<LazyLoadProps> = (props) => {
         children
     } = props;
 
-    const lazyLoadHandler = (entires: IntersectionObserverEntry) => {
-        console.log(entires, 'entires');
+    const lazyLoadHandler = (entires: IntersectionObserverEntry[]) => {
+        const [entry] = entires;
+        const { isIntersecting } = entry;
+        if (isIntersecting) {
+            setVisible(true);
 
+            onContentVisible?.();
+
+            const node = containerRef.current;
+            if (node && node instanceof HTMLElement) {
+                // 停止对元素的观察
+                elementObserver.current?.unobserve(node);
+            }
+        }
     }
 
     useEffect(() => {
         const options = {
-            rootMargin: (typeof offset === 'number' ? `${offset}px` : `${Number(offset)}px`) || '0px',
-            threshould: 0 
+            rootMargin: typeof offset === 'number' ? `${offset}px` : offset || '0px',
+            threshold: 0 
         }
 
         elementObserver.current = new IntersectionObserver(lazyLoadHandler, options);
@@ -51,12 +62,13 @@ const LazyLoad: FC<LazyLoadProps> = (props) => {
 
         return () => {
             if (node instanceof HTMLElement) {
+                // 终止对元素可见性的观察
                 elementObserver.current?.disconnect();
             }
         }
     }, []);
 
-    return <div ref={containerRef} className={className} style={style}>
+    return <div ref={containerRef} className={className} style={{width, height, ...style}}>
         {visible ? children : placeholder}
     </div>
 }
