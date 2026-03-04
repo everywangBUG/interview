@@ -1,19 +1,31 @@
+// import { useState } from "react";
+
 // import { IconAdd } from "./components/Icon/IconAdd"
 // import { IconEmail } from "./components/Icon/IconEmail"
 // import Space from "./components/Space/Space"
 // import { ConfigContext } from "./components/Space/ConfigProvider";
 // import dayjs from 'dayjs'
 // import Calendar from './components/Calendar/Calendar'
-
-import LazyLoadDemo from "./components/LazyLoadDemo/LazyLoadDemo"
-import Watermark from "./components/Watermark/Watermark"
-
+// import LazyLoadDemo from "./components/LazyLoadDemo/LazyLoadDemo"
+// import Watermark from "./components/Watermark/Watermark"
 // import { ConfigProvider, Space as SpaceAntd } from 'antd';
 // import { SpaceContextProvider } from "antd/es/space/context";
+// import HookDemo from "./components/HookDemo/HookDemo";
 
 function App() {
 
+  // const [visible, setVisible] = useState(true);
+
   return (
+    <>
+      
+    </>
+
+    // <>
+    //   {/* <LazyLoadDemo /> */}
+    //   <button onClick={() => setVisible(!visible)}>switch</button>
+    //   { visible ? <HookDemo /> : <div>placeholder</div> }
+    // </>
     // <>
     //   <Calendar
     //     date={dayjs(new Date())}
@@ -96,9 +108,6 @@ function App() {
     //     <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quod deserunt quidem quas in rem ipsam ut nesciunt asperiores dignissimos recusandae minus, eaque, harum exercitationem esse sapiente? Eveniet, id provident!</p>
     //   </Watermark>
     // </>
-    <>
-      <LazyLoadDemo />
-    </>
   )
 }
 
