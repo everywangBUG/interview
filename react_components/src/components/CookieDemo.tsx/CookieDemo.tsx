@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import useCokie from "../../hooks/useCokie";
+import useCookie from "../../hooks/useCookie";
 
 const CookieDemo = () => {
-    const [value, updateCookie, deleteCookie] = useCokie("cookieKey");
+    const [value, updateCookie, deleteCookie] = useCookie("cookieKey");
     
     useEffect(() => {
         deleteCookie();
