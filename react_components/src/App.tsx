@@ -1,5 +1,7 @@
 // import { useState } from "react";
 
+import CookieDemo from "./components/CookieDemo.tsx/CookieDemo"
+
 // import { IconAdd } from "./components/Icon/IconAdd"
 // import { IconEmail } from "./components/Icon/IconEmail"
 // import Space from "./components/Space/Space"
@@ -18,7 +20,7 @@ function App() {
 
   return (
     <>
-      
+      <CookieDemo />
     </>
 
     // <>
