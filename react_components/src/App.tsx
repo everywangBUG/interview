@@ -1,6 +1,7 @@
 // import { useState } from "react";
 
-import CookieDemo from "./components/CookieDemo.tsx/CookieDemo"
+import CookieDemo from "./components/CookieDemo/CookieDemo"
+import HoverDemo from "./components/HoverDemo/HoverDemo"
 
 // import { IconAdd } from "./components/Icon/IconAdd"
 // import { IconEmail } from "./components/Icon/IconEmail"
@@ -20,6 +21,7 @@ function App() {
 
   return (
     <>
+      <HoverDemo />
       <CookieDemo />
     </>
 
