@@ -1,7 +1,13 @@
 // import { useState } from "react";
 
-import CookieDemo from "./components/CookieDemo/CookieDemo"
-import HoverDemo from "./components/HoverDemo/HoverDemo"
+// import { useEffect } from "react";
+// import CookieDemo from "./components/CookieDemo/CookieDemo"
+// import HoverDemo from "./components/HoverDemo/HoverDemo"
+// import { useRef } from "react"
+// import { Message, MessageRef } from "./components/Message/Message"
+import { useMessage } from "./components/Message/useMessage"
+import { ConfigProvider } from "./components/Message/CinfigProvider";
+import { useEffect } from "react";
 
 // import { IconAdd } from "./components/Icon/IconAdd"
 // import { IconEmail } from "./components/Icon/IconEmail"
@@ -15,15 +21,44 @@ import HoverDemo from "./components/HoverDemo/HoverDemo"
 // import { SpaceContextProvider } from "antd/es/space/context";
 // import HookDemo from "./components/HookDemo/HookDemo";
 
-function App() {
+function MessageDemo () {
+  const message = useMessage();
 
+  return <button
+            onClick={() => {
+              message.add({ duration: 2000, position: 'top',  content: '请求成功' })
+            }}
+          >成功</button> 
+}
+
+function App() {
   // const [visible, setVisible] = useState(true);
+  // const messageRef = useRef<MessageRef>(null);
+
 
   return (
+    // <>
+    //   <Message ref={messageRef} />
+    //   <button onClick={() => {
+    //     messageRef.current?.add({
+    //       id: 1,
+    //       content: '请求成功'
+    //     })
+    //   }}>点击请求成功 </button>
+    // </>
+
     <>
-      <HoverDemo />
-      <CookieDemo />
+      <ConfigProvider>
+        <div>
+          <MessageDemo></MessageDemo>
+        </div>
+      </ConfigProvider>
     </>
+
+    // <>
+    //   <HoverDemo />
+    //   <CookieDemo />
+    // </>
 
     // <>
     //   {/* <LazyLoadDemo /> */}

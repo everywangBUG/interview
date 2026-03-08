@@ -286,7 +286,6 @@ export function useWatermark (params: WatermarkOptions) {
           // 判断是手动删除了元素
           const isChanged = mutations.some(mutation => {
             let flag = false;
-            console.log(mutation)
             if (mutation.removedNodes.length) {
               flag = Array.from(mutation.removedNodes).some((node) => node === watermarkDiv.current);
             }
