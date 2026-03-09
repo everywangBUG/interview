@@ -1,7 +1,7 @@
-import { CSSProperties, FC, ReactNode, useMemo, createRef, RefObject, Ref, useImperativeHandle, forwardRef } from "react";
+import { CSSProperties, FC, ReactNode, useMemo, createRef, RefObject, Ref, forwardRef } from "react";
 import useMessageStore, { MessageListFunction } from "./useMessageStore";
 import './Message.scss';
-import useTimer from "./UseTimer";
+import useTimer from "./useTimer";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { createPortal } from "react-dom";
 
@@ -70,9 +70,10 @@ const MessageComponent = (props: { }, ref: Ref<MessageRef>) => {
     const messageWrapper = <div className='message-wrapper'>
                 {
                     positions.map(position => {
-                        return <div key={position} className={`message-wrapper-${position}`}>
+                        return messageList[position].length > 0
+                        && <div key={position} className={`message-wrapper-${position}`}>
                                         <TransitionGroup>
-                                            {messageList[position].map((it) => {
+                                            { messageList[position].map((it) => {
                                             const nodeRef = getOrCreateRef(refs, it.id!);
 
                                              return <CSSTransition
@@ -95,7 +96,10 @@ const MessageComponent = (props: { }, ref: Ref<MessageRef>) => {
                 }
         </div>
 
+        const show = positions.map(position => messageList[position].length > 0).some(it => it);
         const el = useMemo(() => {
+
+            if (!show) return;
             const div = document.createElement('div');
             
             div.className = 'wrapper';
@@ -103,9 +107,9 @@ const MessageComponent = (props: { }, ref: Ref<MessageRef>) => {
             document.body.appendChild(div);
             
             return div;
-        }, [])
+        }, [show])
 
-        return createPortal(messageWrapper,el);
+        return el && createPortal(messageWrapper, el);
 }
 
 export const Message = forwardRef<MessageRef, {}>(MessageComponent);

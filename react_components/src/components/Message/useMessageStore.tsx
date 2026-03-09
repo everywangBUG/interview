@@ -61,7 +61,7 @@ const useMessageStore = (defaultPosition: Position): MessageListFunction => {
                 const nextState = { ...preState };
                 const { position, idx } = findMessage(nextState, id);
                 if (position && idx > -1) {
-                    nextState[position].splice(0, idx);
+                    nextState[position].splice(idx, 1);
                 }
                 return nextState;
             })

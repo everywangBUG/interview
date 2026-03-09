@@ -24,11 +24,18 @@ import { useEffect } from "react";
 function MessageDemo () {
   const message = useMessage();
 
-  return <button
-            onClick={() => {
-              message.add({ duration: 2000, position: 'top',  content: '请求成功' })
-            }}
-          >成功</button> 
+  return <>
+            <button
+              onClick={() => {
+                message.add({ duration: 2000, position: 'top',  content: `请求成功${Math.random().toString().slice(2, 8)}` })
+              }}
+            >成功</button> 
+            <button
+              onClick={() => {
+                message.add({ duration: 2000, position: 'bottom',  content: '请求失败' })
+              }}
+            >失败</button> 
+         </>
 }
 
 function App() {
