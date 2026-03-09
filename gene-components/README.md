@@ -93,7 +93,10 @@
   ```
 * `npm install --save-dev webpack-cli webpack ts-loader`
 
-## package.json中添加unpkg入口
+## package.json中添加unpkg入口，使用npx webpack打包
 `
   "unpkg": "./dist/umd/gene-components.js"
 `
+
+## npm访问地址
+`https://unpkg.com/gene-components@0.0.7/dist/umd/gene-components.js`
