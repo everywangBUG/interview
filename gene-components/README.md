@@ -50,3 +50,50 @@
 
 ## 把react、react-dom移入到peerDependencies脚本中
 * dependencies是子集依赖，peerDependencies是平级，移到里面如果和其他的react包发生冲突的时候提示开发者解决冲突，不会保留副本
+
+## 使用webpack打包成umd发布
+* 添加webpack配置文件
+  ```javascript
+    const path = require('path');
+    /**
+    * @type {import('webpack').Configuration}
+    */
+    module.exports = {
+        mode: 'development',
+        devtool: 'source-map',
+        entry: {
+            index: ['./src/index.ts']
+        },
+        output: {
+            filename: 'gene-components.js',
+            path: path.join(__dirname, 'dist/umd'),
+            library: 'Gene',
+            libraryTarget: 'umd'
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    loader: 'ts-loader',
+                    options: {
+                        configFile: 'tsconfig.build.json' // 指定编译ts文件为tsconfig.build.json
+                    }
+                }
+            ]
+        },
+        resolve: {
+            extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+        },
+        externals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+            dayjs: 'dayjs'
+        }
+    };
+  ```
+* `npm install --save-dev webpack-cli webpack ts-loader`
+
+## package.json中添加unpkg入口
+`
+  "unpkg": "./dist/umd/gene-components.js"
+`
