@@ -5,15 +5,20 @@
 // import HoverDemo from "./components/HoverDemo/HoverDemo"
 // import { useRef } from "react"
 // import { Message, MessageRef } from "./components/Message/Message"
-import { useMessage } from "./components/Message/useMessage"
-import { ConfigProvider } from "./components/Message/CinfigProvider";
-import { useEffect } from "react";
+// import { useMessage } from "./components/Message/useMessage"
+// import { ConfigProvider } from "./components/Message/CinfigProvider";
+// import { Watermark } from "gene-components";
+// import { useMessage, ConfigProvider } from "gene-components";
+import { Calendar } from 'gene-components'
+import "gene-components/dist/esm/Calendar/Calendar.css";
+import "gene-components/dist/esm/Calendar/Header.css";
+import "gene-components/dist/esm/Calendar/MonthCalendar.css";
 
 // import { IconAdd } from "./components/Icon/IconAdd"
 // import { IconEmail } from "./components/Icon/IconEmail"
 // import Space from "./components/Space/Space"
 // import { ConfigContext } from "./components/Space/ConfigProvider";
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 // import Calendar from './components/Calendar/Calendar'
 // import LazyLoadDemo from "./components/LazyLoadDemo/LazyLoadDemo"
 // import Watermark from "./components/Watermark/Watermark"
@@ -21,22 +26,22 @@ import { useEffect } from "react";
 // import { SpaceContextProvider } from "antd/es/space/context";
 // import HookDemo from "./components/HookDemo/HookDemo";
 
-function MessageDemo () {
-  const message = useMessage();
+// function MessageDemo () {
+//   const message = useMessage();
 
-  return <>
-            <button
-              onClick={() => {
-                message.add({ duration: 2000, position: 'top',  content: `请求成功${Math.random().toString().slice(2, 8)}` })
-              }}
-            >成功</button> 
-            <button
-              onClick={() => {
-                message.add({ duration: 2000, position: 'bottom',  content: '请求失败' })
-              }}
-            >失败</button> 
-         </>
-}
+//   return <>
+//             <button
+//               onClick={() => {
+//                 message.add({ duration: 2000, position: 'top',  content: `请求成功${Math.random().toString().slice(2, 8)}` })
+//               }}
+//             >成功</button> 
+//             <button
+//               onClick={() => {
+//                 message.add({ duration: 2000, position: 'bottom',  content: '请求失败' })
+//               }}
+//             >失败</button> 
+//          </>
+// }
 
 function App() {
   // const [visible, setVisible] = useState(true);
@@ -54,13 +59,13 @@ function App() {
     //   }}>点击请求成功 </button>
     // </>
 
-    <>
-      <ConfigProvider>
-        <div>
-          <MessageDemo></MessageDemo>
-        </div>
-      </ConfigProvider>
-    </>
+    // <>
+    //   <ConfigProvider>
+    //     <div>
+    //       <MessageDemo></MessageDemo>
+    //     </div>
+    //   </ConfigProvider>
+    // </>
 
     // <>
     //   <HoverDemo />
@@ -72,26 +77,28 @@ function App() {
     //   <button onClick={() => setVisible(!visible)}>switch</button>
     //   { visible ? <HookDemo /> : <div>placeholder</div> }
     // </>
-    // <>
-    //   <Calendar
-    //     date={dayjs(new Date())}
-    //     defaultValue={dayjs('2026/1/2')}
-    //     dateRanger={(value) => {
-    //       return <div>
-    //         <p style={{backgroundColor: 'yellow', height: '50px'}}>{value.format('YYYY-MM-DD')}</p>
-    //       </div>
-    //     }}
-    //     dateInnerContent={(value) => {
-    //         return <div>
-    //           <p style={{backgroundColor: 'red', height: '25px'}}>{value.year()}</p>
-    //         </div>
-    //     }}
-    //     locale='zh-CN'
-    //     onChange={(date) => {
-    //       alert(date.format('YYYY-MM-DD'))
-    //     }}
-    //   />
-    // </>
+  
+    <>
+      <Calendar
+        date={dayjs(new Date())}
+        defaultValue={dayjs('2026/1/2')}
+        dateRanger={(value) => {
+          return <div>
+            <p style={{backgroundColor: 'yellow', height: '50px'}}>{value.format('YYYY-MM-DD')}</p>
+          </div>
+        }}
+        dateInnerContent={(value) => {
+            return <div>
+              <p style={{backgroundColor: 'red', height: '25px'}}>{value.year()}</p>
+            </div>
+        }}
+        locale='zh-CN'
+        onChange={(date) => {
+          alert(date.format('YYYY-MM-DD'))
+        }}
+      />
+    </>
+
     // <>
     //   <IconAdd size={['100px', '100px']} spin={true} />
     //   <IconEmail size={['100px', '100px']} />
