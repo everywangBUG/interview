@@ -1,6 +1,4 @@
-# React 组件库 guang-components-rollup
-
-[《React 通关秘籍》](https://juejin.cn/book/7294082310658326565) 小册组件库案例
+# React 组件库 gene-components-rollup
 
 ## Install
 \```
@@ -11,7 +9,7 @@ npm install --save gene-components-rollup@latest
 
 ### Watermark 组件
 \```javascript
-import { Watermark } from 'guang-components-rollup';
+import { Watermark } from 'gene-components-rollup';
 
 const App = () => {
   return <Watermark
@@ -36,8 +34,8 @@ export default App;
 
 \```javascript
 import dayjs from 'dayjs';
-import {Calendar} from 'guang-components-rollup';
-import 'guang-components-rollup/dist/index.css';
+import {Calendar} from 'gene-components-rollup';
+import 'gene-components-rollup/dist/index.css';
 
 function App() {
   return (
@@ -53,8 +51,8 @@ export default App;
 ### Message
 
 \```javascript
-import { ConfigProvider, useMessage } from "guang-components-rollup"
-import 'guang-components-rollup/dist/index.css';
+import { ConfigProvider, useMessage } from "gene-components-rollup"
+import 'gene-components-rollup/dist/index.css';
 
 function Aaa() {
   const message = useMessage();
