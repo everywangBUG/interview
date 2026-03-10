@@ -45,6 +45,7 @@
 
 ## 登录npm发布产物
 * `npm publish`
+* 查看地址：`npmjs.com/package/gene-components`
 
 ## 需要引入打包的样式
 
@@ -99,4 +100,5 @@
 `
 
 ## npm访问地址
-`https://unpkg.com/gene-components@0.0.7/dist/umd/gene-components.js`
+* js访问地址：`https://unpkg.com/gene-components@0.0.7/dist/umd/gene-components.js`
+* css访问地址：`https://unpkg.com/gene-components@0.0.9/dist/esm/Calendar/Calendar.css`
