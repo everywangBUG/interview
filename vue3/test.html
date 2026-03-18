@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <p id="count">0</p>
+      <button id="inc">+1</button>
+    </div>
+
+    <script>
+      const state = { count: 0 };
+      const p = new Proxy(state, {
+        get(t, k) {
+          console.log("get", t, k);
+          return t[k];
+        },
+        set(t, k, v) {
+          console.log("set", k, v);
+          t[k] = v;
+          document.getElementById("count").innerText = v;
+          return true;
+        },
+      });
+      console.log(p, "p");
+      document.getElementById("inc").onclick = () => p.count++;
+    </script>
+  </body>
+</html>
