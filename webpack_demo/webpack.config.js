@@ -1,10 +1,26 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: {
+    // index: "./src/index.js",
+    // anther: "./src/another-module.js",
+    index: {
+      import: "./src/index.js",
+      dependOn: "shared"
+    },
+    another: {
+      import : "./src/another-module.js",
+      dependOn: "shard"
+    },
+    shared: "lodash"
+  },
   output: {
-    filename: "boundle.js",
+    // filename: "boundle.js",
+    filename: "[name].boundle.js",
     path: path.resolve(__dirname, "dist"),
+  },
+  optimization: {
+    runtimeChunk: "single"
   },
   module: {
     rules: [
