@@ -22,18 +22,18 @@ state.count++; // 可以更新，不推荐
 - Proxy的局限，能够监听到数据变了，但是不知道通知谁去更新
 - 需要建立**数据->依赖它的副作用函数的映射关系**
 
-1. 副作用函数核心思路
+2. 副作用函数核心思路
 
 - **收集依赖（track）**: 当effect读取某个属性的时候，把它登记到属性的依赖集合里
 - **派发更新（trigger）**：当属性变化的时候，从依赖集合里面找到所有相关的effect，依次重新执行
 
-1. 依赖收集（track）的过程
+3. 依赖收集（track）的过程
 
 - 什么时候发生？在某个副作用执行期间，如果读取了响应式数据，就把副作用记录到对应数据的依赖集合里面
 - 目的：建立**响应式数据 -> 副作用函数**的映射关系，副作用指的使那些产生副作用的函数，比如修改全局变量、读取dom元素修改属性
 - 关键点：只有在**activeEffect**的情况下，才会把依赖收集起来
 
-1. 派发更新（trigger）的过程
+4. 派发更新（trigger）的过程
 
 - 什么时候发生？当某个响应式数据被修改的时候，找到它的依赖集合，把里面的副作用函数全部执行一遍
 - 目的：让用过“这个数据的地方”重新运行，从而使视图更新或者执行其他的逻辑
@@ -46,7 +46,7 @@ state.count++; // 可以更新，不推荐
 - 设置`activeEffect = render`
 - 执行render的时候读取`state.count => track`把`render`存到`count`的依赖集合
 
-2 修改`state.count`
+2. 修改`state.count`
 
 - 触发`Proxy`的`set => trigger`从`count`的依赖集合取出`render`执行
 
@@ -57,7 +57,7 @@ state.count++; // 可以更新，不推荐
 - `activeEffect`: 当前正在运行的副作用函数
 - `bucket`: 依赖收集，使用一个`WeakMap`弱集合收集依赖
 
-1. `effect`的作用
+2. `effect`的作用
 
 - 临时把fn标记为当前活跃副作用
 - 执行fn，触发track
@@ -70,7 +70,7 @@ state.count++; // 可以更新，不推荐
   }
   ```
 
-1. `get`捕获器
+3. `get`捕获器
 
 - 如果有`activeEffect`，说明当前副作用依赖这个属性，按**target => key => Set**结构，把副作用登记到`bucket`中
 
@@ -92,7 +92,7 @@ const state = new Proxy(
 );
 ```
 
-1. `set`捕获器
+5. `set`捕获器
 
 - 数据变化的时候，找到依赖它的副作用集合
 - 依次执行这些副作用函数，更新视图逻辑
@@ -122,7 +122,7 @@ const state = new Proxy(
 - 执行patch：对比新旧DOM =>最小化DOM改动
 - 最后只更新订阅变更字段的属性
 
-1. React的更新流程
+2. React的更新流程
 
 - 数据源：`state`
 - 显示调用：`setState`
@@ -130,18 +130,18 @@ const state = new Proxy(
 - Render阶段：自上向下构造新树
 - Commit阶段：Diff并写入DOM
 
-1. 更新对比
+3. 更新对比
 
 - Vue默认细粒度更新某一项
 - React默认是自顶向下收集异步更新，开启memo后可以细粒度的更新某一项
 
-1. Vue常见陷阱
+4. Vue常见陷阱
 
 - 结构赋值丢失响应性，使用点语法修改或者toRefs函数
 - 直接修改props打破单向数据流，使用emit发送事件通知父组件
 - 数组下标改变不会触发响应式
 
-1. React常见陷阱
+5. React常见陷阱
 
 - 直接改变state，直接使用`state.a = '111'`这样赋值没有改变引用，不会触发更新，使用immutable
 - 不稳定引用导致子渲染
@@ -162,7 +162,7 @@ const state = new Proxy(
 - 副作用函数准备下一次重新执行之前
 - 组件被卸载
 
-1. 怎么写清理
+2. 怎么写清理
 
 - 使用`watch`或者`watchEffect`
   - `watch`返回`stop()`，可以手动停止
@@ -172,8 +172,6 @@ const state = new Proxy(
   - 可以使用`abortContraler`或者 `token`验证法
 - `watch`和`watchEffect`的区别
 
-
-
 ## Vue父子组件通信
 
 1. 父组件如何像子组件通信
@@ -181,12 +179,12 @@ const state = new Proxy(
 - 使用`props`传递数据，子组件通过props获取只读数据，单向的传递
 - 类型校验和默认值
 
-1. 子组件如何通知父组件
+2. 子组件如何通知父组件
 
 - 使用`emit(funcctionName, args)`定义一个自定义的函数
 - 父组件使用@语法监听子组件发出的自定义事件
 
-1. 如何实现双向绑定
+3. 如何实现双向绑定
 
 - 使用`v-model`，双向绑定
 - 是v-bind和emit的语法糖，简化通信写法
@@ -202,7 +200,7 @@ const state = new Proxy(
 
 - 父组件中使用`provide(key, value)`
 
-1. Inject
+2. Inject
 
 - 任意组件中使用`inject(key, defaultValue)`
 
@@ -247,7 +245,7 @@ const state = new Proxy(
 - 父组件
 
 ```vue
-  <div>
+<div>
     <template #header>
       <h3>这是头部</h3>
     </template>
@@ -258,7 +256,7 @@ const state = new Proxy(
   </div>
 ```
 
-1. 作用域插槽
+3. 作用域插槽
 
 - 插槽内容里面访问不到子组件数据？
 - 该用哪个组件的数据？
@@ -268,31 +266,31 @@ const state = new Proxy(
 - 父组件
 
 ```vue
-  <template>
-    <ChildrenComponent>
-      <p>父组件消息：{{ parentMsg }}</p>
-      <!-- 普通插槽 -->
-      <template>
-        <p>插槽内容：{{ parentMsg }}</p>
-      </template>
+<template>
+  <ChildrenComponent>
+    <p>父组件消息：{{ parentMsg }}</p>
+    <!-- 普通插槽 -->
+    <template>
+      <p>插槽内容：{{ parentMsg }}</p>
+    </template>
 
-      <!-- 作用域插槽 -->
-      <template #default="slotProps">
-        <div>
-          <p>作用域插槽：{{ parentMsg }}</p>
-          <p>子组件数据：{{ slotProps.childData }}</p>
-          <p>子组件方法：{{ slotProps.childMethod() }}</p>
-        </div>
-      </template>
-    </ChildrenComponent>
-  </template>
-  <script setup>
-    import { ref } from 'vue'
-    import ChildrenComponent from './Components';
+    <!-- 作用域插槽 -->
+    <template #default="slotProps">
+      <div>
+        <p>作用域插槽：{{ parentMsg }}</p>
+        <p>子组件数据：{{ slotProps.childData }}</p>
+        <p>子组件方法：{{ slotProps.childMethod() }}</p>
+      </div>
+    </template>
+  </ChildrenComponent>
+</template>
+<script setup>
+import { ref } from "vue";
+import ChildrenComponent from "./Components";
 
-    const parentMsg = ref('来自父组件的消息');
-    return { parentMsg };
-  </script>
+const parentMsg = ref("来自父组件的消息");
+return { parentMsg };
+</script>
 ```
 
 - 子组件
@@ -309,7 +307,7 @@ const state = new Proxy(
   </script>
 ```
 
-1. 设计模式
+4. 设计模式
 
 - 明确数据归属
   - 插槽内容用的谁的数据，使用了子组件的数据要使用作用域插槽
@@ -323,13 +321,13 @@ const state = new Proxy(
 
 - 路由是页面url和组件之间映射关系
 
-1. 使用Vue优势
+2. 使用Vue优势
 
 - 无需刷新整个页面，页面流畅
 - url和内容是同步的，方便用户分享和收藏
 - 能在实现丰富的动画效果
 
-1. 跳转方式
+3. 跳转方式
 
 - 声明式导航
   - `<router-link to="/ablut">关于</router-link>`
@@ -347,40 +345,36 @@ const state = new Proxy(
   - 传参方式容易混淆
 
 1. 动态路由：URL路径参数
-  - 路径：/user/:id
-  - 获取：$router.params.id
+
+- 路径：/user/:id
+- 获取：$router.params.id
+
 2. 查询字符串：URL问号参数
-  - 路径：/search?q=vue&page=1
-  - 获取：$route.query.q
+
+- 路径：/search?q=vue&page=1
+- 获取：$route.query.q
 
 - 动态路由：资源标志
 - 查询字符串：筛选条件
 
-1. 复杂的组件使用Props传参：组件属性解耦
+3. 复杂的组件使用Props传参：组件属性解耦
 
 ### Vue-router路由守卫
 
 1. 全局守卫
-  - 全局前置守卫`beforeEach((to, from, next) => { if (to.meta.requiresAyth) { nex('/login') } })`
-  - 导航出发时执行：权限控制、登录验证
-  - 可中断导航：重定向等
+
+- 全局前置守卫`beforeEach((to, from, next) => { if (to.meta.requiresAyth) { nex('/login') } })`
+- 导航出发时执行：权限控制、登录验证
+- 可中断导航：重定向等
+
 2. 路由独享守卫
 
 ```vue
-  {
-    path: '/admin',
-    component: Admin,
-    beforeEnter: (to, from, next) => {
-      if (isAdmin()) {
-        next()
-      } else {
-        next('/login');
-      }
-    }
-  }
+{ path: '/admin', component: Admin, beforeEnter: (to, from, next) => { if
+(isAdmin()) { next() } else { next('/login'); } } }
 ```
 
-1. 组件内部守卫
+3. 组件内部守卫
 
 - beforeRouteEnter 进入前
 - beforeRouteUpdate 更新前
@@ -389,15 +383,17 @@ const state = new Proxy(
 ### Vue-Router元信息
 
 - 配置方式
+
 ```javascript
-  const routes = [
-    {
-      path: '/admin',
-      component: Admin,
-      meta: { requiresAuth: true }
-    }
-  ]
+const routes = [
+  {
+    path: "/admin",
+    component: Admin,
+    meta: { requiresAuth: true },
+  },
+];
 ```
+
 - 访问方式
   - 通过`route.meta`对象访问
   - 全局守卫中访问`to.meta`
@@ -411,34 +407,36 @@ const state = new Proxy(
 ## Pinia
 
 ### 创建和使用Pinia
+
 - 如何创建store
+
 ```javascript
-  import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-  export const useCounterStore = defineStore('counter', {
-    state: () => ({
-      count: 0
-    }),
-    actions: {
-      increment() {
-        this.count++;
-      }
-    }
-  })
+export const useCounterStore = defineStore("counter", {
+  state: () => ({
+    count: 0,
+  }),
+  actions: {
+    increment() {
+      this.count++;
+    },
+  },
+});
 ```
-
 
 - 如何使用store
 
 ```javascript
-  import { useCounterStore } from './stores/counter';
+import { useCounterStore } from "./stores/counter";
 
-  const store = useCounterStore();
-  store.increment();
-  console.log(store.count);
+const store = useCounterStore();
+store.increment();
+console.log(store.count);
 ```
 
 ### Pinia的三个核心概念
+
 1. state：数据仓库
 2. actions：处理业务逻辑，支持异步操作
 3. getters：计算属性，缓存优化，类似于`computed`
@@ -447,7 +445,7 @@ const state = new Proxy(
 
 - 精准变更数据
   - 不要全量替换对象
-  - 使用Object.assign或者对象拓展运算符 
+  - 使用Object.assign或者对象拓展运算符
 
 - 避免级联更新
 - 提升应用性能
@@ -463,53 +461,62 @@ const state = new Proxy(
 ## Vue模版编译流程
 
 1. 什么是模版
-  - Vue在运行的时候无法理解.vue中的模版语法，需要将其编译成javascript代码
-  - 为什么需要编译
+
+- Vue在运行的时候无法理解.vue中的模版语法，需要将其编译成javascript代码
+- 为什么需要编译
 
 2. 三个编译阶段
-  - 解析：模版 -> AST抽象语法树
-  - 优化：静态标记，标记哪些节点是静态的不变，后续在视图更新时跳过
-  - 渲染：优化好的AST后渲染函数
-  - 减少Diff开销
+
+- 解析：模版 -> AST抽象语法树
+- 优化：静态标记，标记哪些节点是静态的不变，后续在视图更新时跳过
+- 渲染：优化好的AST后渲染函数
+- 减少Diff开销
 
 ## Vue Diff算法
 
 1. 虚拟DOM痛点
-  - 需要高效对比
-  - 直接对比的话时间复杂度O(n3)太太慢
-  - 需要优化算法
+
+- 需要高效对比
+- 直接对比的话时间复杂度O(n3)太太慢
+- 需要优化算法
 
 2. 核心原理
-  - 同层级节点比较
-  - 不跨层级比较节点
-  - 双端优化算法
-  - 时间复杂度O(n)
+
+- 同层级节点比较
+- 不跨层级比较节点
+- 双端优化算法
+- 时间复杂度O(n)
 
 3. patch过程
-  - 创建：新节点不存在
-  - 删除：旧节点存在
-  - 更新：新旧节点不同
-  - 移动：通过key值优化
+
+- 创建：新节点不存在
+- 删除：旧节点存在
+- 更新：新旧节点不同
+- 移动：通过key值优化
 
 4. key值的作用
-  - 唯一的标志节点
-  - 避免无效操作
-  - 提升复用效率
-  - 减少DOM操作
+
+- 唯一的标志节点
+- 避免无效操作
+- 提升复用效率
+- 减少DOM操作
 
 ## nextTick
 
 1. nextTick的作用
-  - 等待DOM更新后执行
-  - 解决异步更新的问题
-  - 确保数据同步完成
+
+- 等待DOM更新后执行
+- 解决异步更新的问题
+- 确保数据同步完成
 
 2. 性能优化
-  - 批量操作优化
-  - 避开重复渲染
-  - 提升页面性能
+
+- 批量操作优化
+- 避开重复渲染
+- 提升页面性能
 
 3. 适用场景
-  - DOM操作
-  - 状态同步
-  - 性能优化
+
+- DOM操作
+- 状态同步
+- 性能优化
