@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<employees>
+  <employee id="001">
+    <name>张三</name>
+    <age>28</age>
+    <position>软件工程师</position>
+    <department>研发部</department>
+  </employee>
+  <employee id="002">
+    <name>李四</name>
+    <age>35</age>
+    <position>产品经理</position>
+    <department>产品部</department>
+  </employee>
+</employees>

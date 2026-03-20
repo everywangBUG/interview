@@ -24,7 +24,7 @@ module.exports = {
     // filename: "bundle.js",
     filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
-    clean: true,
+    clean: true, // 每次打包之前清理/dist
   },
   optimization: {
     // moduleIds: "deterministic",
@@ -53,6 +53,14 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: "asset/resource",
       },
+      {
+        test: /\.(csv|tsv)$/i,
+        use: ["csv-loader"]
+      },
+      {
+        test: /\.xml$/i,
+        use: ["xml-loader"]
+      }
     ],
   },
 };
