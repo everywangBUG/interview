@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSE 流式对话</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #333;
+    }
+    #chat-container {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      min-height: 300px;
+      background-color: #f9f9f9;
+    }
+    .message {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .message.sent {
+      background-color: #e3f2fd;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <h1>SSE 流式对话演示</h1>
+  <div id="chat-container"></div>
+
+  <script>
+    // 获取聊天容器
+    const chatContainer = document.getElementById('chat-container');
+    
+    // 当前消息元素
+    let currentMessageElement = null;
+    
+    // 使用fetch API实现流式接收
+    async function fetchStream() {
+      try {
+        const response = await fetch('/stream');
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        
+        if (!response.body) {
+          throw new Error('No response body');
+        }
+        
+        // 获取ReadableStream
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        // 处理流式数据
+        while (true) {
+          // 读取数据
+          const { done, value } = await reader.read();
+          
+          if (done) {
+            console.log('Stream complete');
+            break;
+          }
+          
+          // 解码数据
+          const chunk = decoder.decode(value, { stream: true });
+          
+          // 处理数据块（按行分割）
+          const lines = chunk.split('\n');
+          
+          lines.forEach(line => {
+            if (line.startsWith('data: ')) {
+              const data = line.substring(6);
+              
+              if (data === '') {
+                // 空数据表示消息结束
+                currentMessageElement = null;
+              } else {
+                // 如果没有当前消息元素，创建一个新的
+                if (!currentMessageElement) {
+                  currentMessageElement = document.createElement('div');
+                  currentMessageElement.className = 'message';
+                  chatContainer.appendChild(currentMessageElement);
+                }
+                
+                // 添加字符到当前消息
+                currentMessageElement.textContent += data;
+                
+                // 滚动到底部
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+      }
+    }
+    
+    // 启动流式获取
+    fetchStream();
+  </script>
+</body>
+</html>
