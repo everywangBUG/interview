@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode, useRef } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useRef } from "react";
 import useVirtual from "./useVirtual";
 
 export interface VirtualListProps<T> {
@@ -42,12 +42,24 @@ function VirtualList<T> ({
         updateItemSize
     } = useVirtual({ data, height, itemHeight, overscan });
 
-    console.log(items, 'items');
-
     const onScrollWrapper = (e: React.UIEvent<HTMLDivElement>) => {
         handleScroll(e);
         onScroll?.(e);
     }
+
+    useEffect(() => {
+        if (typeof itemHeight === "function") {
+            items.forEach((it) => {
+                const el = itemRefs.current.get(it.index);
+                if (el) {
+                    const actualHeight = el.offsetHeight;
+                    if (actualHeight !== it.height) {
+                        updateItemSize(it.index, actualHeight);
+                    }
+                }
+            })
+        }
+    }, [items, itemHeight, updateItemSize])
 
     return (
         <div
@@ -72,39 +84,36 @@ function VirtualList<T> ({
                         left: 0,
                         width: "100%",
                         // 将整个列表上移，抵消前面不可见部分的高度
-                        transform: `translateY(${items?.length > 0 ? items[0].offsetTop : 0}px)`
+                        transform: `translateY(${items.length > 0 ? items[0].offsetTop : 0}px)`
                     }}
                 >
                     {
                         items.map((item) => {
-                            const key = getKey ? getKey(item.data, item.index) : item.index
+                            const key = getKey ? getKey(item.data, item.index) : item.index;
 
                             // 包装一层用于测量高度 (如果是动态高度)
                             return (
                                 <div
-                                key={key}
-                                ref={(el) => {
-                                    if (el) itemRefs.current.set(item.index, el);
-                                    else itemRefs.current.delete(item.index);
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: 0, // 因为父容器已经 translateY 了，这里相对位置就是 0
-                                    left: 0,
-                                    width: '100%',
-                                    height: item.height,
-                                    // 如果不用父容器 translate，这里应该是 top: item.offsetTop
-                                    // 使用父容器 translate 可以减少每个子元素的 style 计算量
-                                    transform: `translateY(${item.offsetTop - (items[0]?.offsetTop || 0)}px)`
-                                }}
+                                    key={key}
+                                    ref={(el) => {
+                                        if (el) itemRefs.current.set(item.index, el);
+                                        else itemRefs.current.delete(item.index);
+                                    }}
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        // 不设置固定高度，让内容撑开以便测量实际高度
+                                        minHeight: typeof itemHeight === 'number' ? itemHeight : undefined,
+                                        // 使用父容器 translate 后，相对位置通过 translateY 计算
+                                        transform: `translateY(${item.offsetTop - (items[0]?.offsetTop || 0)}px)`
+                                    }}
                                 >
-                                {renderItem(item.data, item.index, {
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    width: '100%',
-                                    height: item.height,
-                                })}
+                                    {renderItem(item.data, item.index, {
+                                        width: '100%',
+                                        // 不设置固定高度，让内容撑开
+                                    })}
                                 </div>
                             );
                         })

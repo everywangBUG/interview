@@ -10,22 +10,25 @@ function useVirtual<T> ({
     const containRef = useRef<HTMLDivElement>(null);
     const [scrollOffset, setScrollOffset] = useState(0);
     
-    console.log(height, overscan)
-
     // 缓存每个元素的高度，动态渲染
     // 初始化固定高度或者预估高度
-    const sizeCache = useRef<number[]>([]);
+    const defaultHeight = typeof itemHeight === "function" ? 50 : itemHeight;
+    const sizeCache = useRef<number[]>(new Array(data.length).fill(defaultHeight));
 
     // 初始化或重置缓存
     useEffect(() => {
         // 固定高度，直接填充
-        if (itemHeight) {
+        if (typeof itemHeight === "number") {
             sizeCache.current = new Array(data.length).fill(itemHeight);
         } else {
             // 动态高度，如果长度变化，保留旧数据或者填充默认值
             if (sizeCache.current.length !== data.length) {
                 const newSizeCache = [...sizeCache.current];
+                
+                // 截取或扩展数组到 data.length
+                newSizeCache.length = data.length;
 
+                // 填充默认值
                 for (let i = 0; i < data.length; i++) {
                     if (newSizeCache[i] === undefined) {
                         newSizeCache[i] = 50; // 默认的预估高度
@@ -52,23 +55,18 @@ function useVirtual<T> ({
                 start = i;
                 break;
             }
-            currentTop = h;
+            currentTop += h;
         }
 
         // 2. 找到结束索引（第一个顶部超过滚动位置+容器高度的元素）
         let currentBottom = currentTop;
         for (let i = start; i < data.length; i++) {
             const h = sizeCache.current[i];
-            if (currentTop >= scrollOffset + height) {
+            if (currentBottom > scrollOffset + height) {
                 end = i - 1;
                 break;
             }
-            currentTop += h;
-        }
-
-        // 如果没有触发 break，说明一直到底部了
-        if (end === data?.length - 1 && currentTop < scrollOffset + height) {
-            end = data.length - 1;
+            currentBottom += h;
         }
 
         // 应用 Overscan (缓冲区)
@@ -76,11 +74,9 @@ function useVirtual<T> ({
         const finalEnd = Math.min(data.length - 1, end + overscan);
 
         // 计算每个元素的绝对位置 (Top Offset)
-        // 为了性能，我们只计算可视区域内的偏移量，或者预先计算好前缀和
-        // 这里采用即时计算起始偏移量 + 累加
         let offsetTop = 0;
-        for(let i=0; i<finalStart; i++) {
-        offsetTop += sizeCache.current[i];
+        for(let i = 0; i < finalStart; i++) {
+            offsetTop += sizeCache.current[i];
         }
 
         const items = [];
@@ -111,8 +107,12 @@ function useVirtual<T> ({
         }
     }
 
-    const updateItemSize = () => {
-
+    // 动态更新方法（当内容渲染后，实际的可见高度）
+    const updateItemSize = (index: number, newSize: number) => {
+        if (sizeCache.current[index] !== newSize) {
+            sizeCache.current[index] = newSize;
+            setScrollOffset(prev => prev);
+        }
     }
 
     return {
