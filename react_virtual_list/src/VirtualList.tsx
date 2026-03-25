@@ -40,7 +40,7 @@ function VirtualList<T> ({
         containRef,
         handleScroll,
         updateItemSize
-    } = useVirtual({ data, height, itemHeight, overscan });
+    } = useVirtual({ data, height, itemHeight, overscan, itemRefs });
 
     const onScrollWrapper = (e: React.UIEvent<HTMLDivElement>) => {
         handleScroll(e);

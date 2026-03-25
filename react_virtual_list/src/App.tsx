@@ -28,7 +28,7 @@ function App() {
       {/* <List data={list_demo} height={200} itemHeight={30} itemKey={Math.random().toString().slice(0, 8)}>
         {index => <div>{index}</div>}
       </List> */}
-      <div>
+      {/* <div>
       <h3>固定 (自动测量)</h3>
         <VirtualList
             data={data}
@@ -47,14 +47,14 @@ function App() {
             )}
           >
         </VirtualList>
-      </div>
+      </div> */}
 
       <div>
         <h3>动态高度 (自动测量)</h3>
         <VirtualList
           data={data.map((d, i) => ({ ...d, content: d.content.repeat(i % 3 + 1) }))}
           height={400}
-          itemHeight={() => 60} // 初始预估高度
+          itemHeight={() => 80} // 初始预估高度
           renderItem={(item) => (
             <div style={{ 
               borderBottom: '1px solid #eee', 
