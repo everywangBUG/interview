@@ -1,10 +1,10 @@
 <script>
 import { defineComponent } from 'vue'
-import ToDoListVue2 from './components/ToDoListVue2.vue'
+import ToDoListVue3 from './components/ToDoListVue3.vue'
 
 export default defineComponent({
   components: {
-    ToDoListVue2
+    ToDoListVue3
   },
   setup() {
     
@@ -13,5 +13,5 @@ export default defineComponent({
 </script>
 
 <template>
-  <ToDoListVue2 />
+  <ToDoListVue3 />
 </template>
