@@ -1,3 +1,6 @@
+// 3.1 声明式的描述ui
+
+// 3.2 初识渲染器
 const vNode = {
   tag: "div",
   props: {
