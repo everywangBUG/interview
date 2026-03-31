@@ -117,7 +117,7 @@
   - 所有不符合上面三点的都是异质对象
   -
 
-### 如何代理Object
+### 5.3_如何代理Object
 
 * 使用has实现对in操作符的拦截
   ```javascript
@@ -140,4 +140,25 @@
         return Reflect.ownKeys(target);
       },
     });
+  ```
+
+### 5.4_合理的触发响应
+  * 设置相同的值和重复设置NaN的值不触响应
+  ```javascript
+    const obj = { foo: 1 };
+
+    const p = new Proxy(obj, {
+      set(target, key, newVal, receiver) {
+        // 先获取旧值
+        const oldVal = target[key];
+
+        const type = Object.prototype.hasOwnProperty.call(target, key) ? "SET" : "ADD";
+        const res = Reflect.set(target, key, newVal, receiver);
+        // 比较新的值与旧的值，如果不全等，并且都不是NaN的时候才触发响应
+        if (oldVal !== newVal && (oldVal === oldVal || newVal === newVal)) {
+          trigger(target, key, type);
+        }
+        return res;
+      }
+    })
   ```

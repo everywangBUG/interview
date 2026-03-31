@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect, Suspense } from "react";
 // import Calendar1 from "./components/Control";
 // import MiniCalendar from './components/MiniCalendar.tsx/MiniCalendar';
 import { Use } from "./hook/Use";
+import Theme from "./components/Theme";
 // import UseState from './hook/UseState';
 // import UseEffect from './hook/UseEffect';
 // import UseLayoutEffect from './hook/useLayoutEffect';
@@ -108,6 +109,7 @@ const App = (props: AppProps) => {
         ref={miniCalendarRef}
       /> */}
       <Use messagePromise={messagePromise}/>
+      <Theme />
     </div>
   );
 };
