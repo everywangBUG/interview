@@ -42,6 +42,7 @@ const clearAll = () => {
   <div class="to_do_list">
     <div class="input_wrapper">
       <input v-model="inputValue" placeholder="请输入今日代办项" />
+      <div>{{inputValue}}</div>
       <button type="submit" @click="handleSubmit">提交</button>
       <div class="list">
           <div v-for="(item, index) in list" :key="index">
