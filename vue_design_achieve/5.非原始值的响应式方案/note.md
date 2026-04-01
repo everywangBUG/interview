@@ -26,7 +26,7 @@
 
       if (res && hasKey) {
         // 只有当被删除的属性是自己的属性且删除成功的时候，才触发更新
-        trigger(target, key, 'DELETE');
+        trigger(target, key, "DELETE");
       }
       // return Reflect.deleteProperty(target, key);
       return res;
@@ -92,11 +92,11 @@
 
 | [[GetPrototypeOf]] => () => Object | null => 查明该对象提供继承属性的对象，null代表没有继承
 
-| 内部方法              | 函数签名                                     | 描述                                                                                                                                                                                                     |
-| --------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [[GetPrototypeOf]]    | () -> object                                 | null                                                                                                                                                                                                     |
-| [[SetPrototypeOf]]    | (Object                                      | null) -> Boolean                                                                                                                                                                                         |
-| [[IsExtensible]]      | () -> Boolean                                | 查明是否允许向该对象添加其他属性                                                                                                                                                                         |
+| 内部方法              | 函数签名                                     | 描述 |
+| --------------------- | -----------------------------------------   | --- |
+| [[GetPrototypeOf]]    | () -> object \| null  | 获取某个对象的属性 |
+| [[SetPrototypeOf]]    | (Object \| null) -> Boolean   | 设置某个对象的属性 |
+| [[IsExtensible]]      | () -> Boolean                      | 查明是否允许向该对象添加其他属性 |
 | [[PreventExtensions]] | () -> Boolean                                | 控制能否向该对象添加新属性。如果操作成功则返回 true，如果操作失败则返回 false                                                                                                                            |
 | [[GetOwnProperty]]    | (propertyKey) -> Undefined                   | Property Descriptor                                                                                                                                                                                      | 返回该对象自身属性的描述符，其键为 propertyKey，如果不存在这样的属性，则返回 undefined |
 | [[DefineOwnProperty]] | (propertyKey, PropertyDescriptor) -> Boolean | 创建或更改自己的属性，其键为propertyKey，以具有由PropertyDescriptor 描述的状态。如果该属性已成功创建或更新，则返回true；如果无法创建或更新该属性，则返回 false                                           |
@@ -117,48 +117,53 @@
   - 所有不符合上面三点的都是异质对象
   -
 
-### 5.3_如何代理Object
+### 5.3\_如何代理Object
 
-* 使用has实现对in操作符的拦截
+- 使用has实现对in操作符的拦截
+
   ```javascript
-    const obj = { foo: 1 };
-    const p = new Proxy(obj, {
-      has(target, key) {
-        track(target, key);
-        return Reflect.has(target, key);
-      },
-    });
+  const obj = { foo: 1 };
+  const p = new Proxy(obj, {
+    has(target, key) {
+      track(target, key);
+      return Reflect.has(target, key);
+    },
+  });
   ```
 
-* 使用ownKeys拦截函数拦截Reflect.ownKeys操作
+- 使用ownKeys拦截函数拦截Reflect.ownKeys操作
   ```javascript
-    const obj1 = { foo: 1 };
-    const ITERATE_KEY = Symbol();
-    const p1 = new Proxy(obj, {
-      ownKeys(target) {
-        track(target, ITERATE_KEY);
-        return Reflect.ownKeys(target);
-      },
-    });
+  const obj1 = { foo: 1 };
+  const ITERATE_KEY = Symbol();
+  const p1 = new Proxy(obj, {
+    ownKeys(target) {
+      track(target, ITERATE_KEY);
+      return Reflect.ownKeys(target);
+    },
+  });
   ```
 
-### 5.4_合理的触发响应
-  * 设置相同的值和重复设置NaN的值不触响应
-  ```javascript
-    const obj = { foo: 1 };
+### 5.4\_合理的触发响应
 
-    const p = new Proxy(obj, {
-      set(target, key, newVal, receiver) {
-        // 先获取旧值
-        const oldVal = target[key];
+- 设置相同的值和重复设置NaN的值不触响应
 
-        const type = Object.prototype.hasOwnProperty.call(target, key) ? "SET" : "ADD";
-        const res = Reflect.set(target, key, newVal, receiver);
-        // 比较新的值与旧的值，如果不全等，并且都不是NaN的时候才触发响应
-        if (oldVal !== newVal && (oldVal === oldVal || newVal === newVal)) {
-          trigger(target, key, type);
-        }
-        return res;
-      }
-    })
-  ```
+```javascript
+const obj = { foo: 1 };
+
+const p = new Proxy(obj, {
+  set(target, key, newVal, receiver) {
+    // 先获取旧值
+    const oldVal = target[key];
+
+    const type = Object.prototype.hasOwnProperty.call(target, key)
+      ? "SET"
+      : "ADD";
+    const res = Reflect.set(target, key, newVal, receiver);
+    // 比较新的值与旧的值，如果不全等，并且都不是NaN的时候才触发响应
+    if (oldVal !== newVal && (oldVal === oldVal || newVal === newVal)) {
+      trigger(target, key, type);
+    }
+    return res;
+  },
+});
+```
