@@ -90,11 +90,9 @@
 - javascript一切皆对象
 - 对象的内部方法（表5.1）
 
-| [[GetPrototypeOf]] => () => Object | null => 查明该对象提供继承属性的对象，null代表没有继承
-
 | 内部方法              | 函数签名                                     | 描述 |
 | --------------------- | -----------------------------------------   | --- |
-| [[GetPrototypeOf]]    | () -> object \| null  | 获取某个对象的属性 |
+| [[GetPrototypeOf]]    | () -> object \| null  | 查明该对象提供继承属性的对象，null代表没有继承 |
 | [[SetPrototypeOf]]    | (Object \| null) -> Boolean   | 设置某个对象的属性 |
 | [[IsExtensible]]      | () -> Boolean                      | 查明是否允许向该对象添加其他属性 |
 | [[PreventExtensions]] | () -> Boolean                                | 控制能否向该对象添加新属性。如果操作成功则返回 true，如果操作失败则返回 false                                                                                                                            |
