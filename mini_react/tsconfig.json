@@ -7,7 +7,7 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "UMD",
+    "module": "umd",
     "target": "es2016",
     "types": [],
     // For nodejs:
