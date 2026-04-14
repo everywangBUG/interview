@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件冒泡与更新时机</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script>
+    <script>
+        const { effect, ref } = VueReactivity;
+
+        const bool = ref(false);
+
+        console.log(VueReactivity, 'VueRe')
+
+        effect(() => {
+            // 创建vnode
+            const vnode = {
+                type: "div",
+                props: bool.value ? {
+                    onClick: () => {
+                        alert("父元素 clicked")
+                    }
+                } : {},
+                children: [
+                    {
+                        type: "p",
+                        props: {
+                            onClick: () => {
+                                bool.value = true
+                            }
+                        },
+                        children: "text"
+                    }
+                ]
+            }
+        })
+
+        // 渲染vnode
+        renderer.render(vnode, document.querySelector("#app"));
+    </script>
+</body>
+</html>
