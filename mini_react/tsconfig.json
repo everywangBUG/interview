@@ -8,6 +8,7 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "umd",
+    "ignoreDeprecations": "6.0",
     "target": "es2016",
     "types": [],
     // For nodejs:

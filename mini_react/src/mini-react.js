@@ -10,7 +10,7 @@ var MiniReact = (function () {
     function createElement(type, props, ...children) {
         // 处理 props
         const _props = props || {};
-        
+
         // 处理 children
         const flattenedChildren = children.flat(Infinity);
         const processedChildren = flattenedChildren.map(child => {
@@ -42,8 +42,11 @@ var MiniReact = (function () {
     }
 
     // 工作循环相关变量
+    // 下一个要处理的任务单元
     let nextUnitOfWork = null;
+
     let wipRoot = null;
+    // 当前的节点
     let currentRoot = null;
     let deletions = [];
 
@@ -521,11 +524,18 @@ function App() {
             clearTimeout(timer);
         };
     }, []);
+
+    MiniReact.useEffect(() => {
+        setTimeout(() => {
+            const el = document.getElementById("button");
+            el.textContent = "改成+1"
+        }, 2000)
+    })
     
     return MiniReact.createElement("div", null,
         MiniReact.createElement("h1", null, "MiniReact 计数器"),
         MiniReact.createElement("p", null, "当前计数: ", count),
-        MiniReact.createElement("button", { onClick: handleClick }, "加一")
+        MiniReact.createElement("button", { onClick: handleClick, id: "button" }, "加一")
     );
 }
 
