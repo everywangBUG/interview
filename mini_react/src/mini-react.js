@@ -44,14 +44,16 @@ var MiniReact = (function () {
     // 工作循环相关变量
     // 下一个要处理的任务单元
     let nextUnitOfWork = null;
-
+    // 转换成wipRoot fiber节点
     let wipRoot = null;
     // 当前的节点
     let currentRoot = null;
+    // 删除的dom数组
     let deletions = [];
 
     // 当前工作的 Fiber
     let wipFiber = null;
+    // state和hook的下标
     let stateHookIndex = null;
 
     /**
@@ -68,6 +70,8 @@ var MiniReact = (function () {
             alternate: currentRoot,
         };
 
+        // console.log(wipRoot, "wipRoot");
+
         deletions = [];
         nextUnitOfWork = wipRoot;
     }
@@ -78,16 +82,23 @@ var MiniReact = (function () {
      */
     function workLoop(deadline) {
         let shouldYield = false;
+        // console.log("进入工作循环");
+        // 如果fiber节点有值，应该停止渲染，进入工作循环
         while (nextUnitOfWork && !shouldYield) {
+            // console.log(nextUnitOfWork, "nextUnitOfWork");
+            // 下一个进入处理函数的单元
             nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+            // 如果浏览器有空闲的时间，应该处理
             shouldYield = deadline.timeRemaining() < 1;
         }
 
+        // 所有的单元被处理完毕后提交commitRoot
         if (!nextUnitOfWork && wipRoot) {
             commitRoot();
         }
         
         if (typeof requestIdleCallback !== 'undefined') {
+            // 进入工作循环
             requestIdleCallback(workLoop);
         } else {
             // 兼容不支持 requestIdleCallback 的环境
@@ -121,6 +132,41 @@ var MiniReact = (function () {
         currentRoot = wipRoot;
         wipRoot = null;
         deletions = [];
+    }
+
+        /**
+     * 提交工作单元
+     */
+    function commitWork(fiber) {
+        // 没有fiber节点返回
+        if (!fiber) {
+            return;
+        }
+
+        let domParentFiber = fiber.return;
+        console.log(domParentFiber, "domParentFiber");
+        while (domParentFiber && !domParentFiber.dom) {
+            domParentFiber = domParentFiber.return;
+        }
+
+        if (!domParentFiber) return;
+        
+        const domParent = domParentFiber.dom;
+
+        if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
+            // 新增节点
+            domParent.appendChild(fiber.dom);
+        } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
+            // 更新属性或者方法
+            updateDom(fiber.dom, fiber.alternate.props, fiber.props);
+        } else if (fiber.effectTag === "DELETION") {
+            // 删除节点
+            commitDeletion(fiber, domParent);
+        }
+
+        // 递归处理child和sibling
+        commitWork(fiber.child);
+        commitWork(fiber.sibling);
     }
 
     /**
@@ -194,35 +240,6 @@ var MiniReact = (function () {
         }
 
         return true;
-    }
-
-    /**
-     * 提交工作单元
-     */
-    function commitWork(fiber) {
-        if (!fiber) {
-            return;
-        }
-
-        let domParentFiber = fiber.return;
-        while (domParentFiber && !domParentFiber.dom) {
-            domParentFiber = domParentFiber.return;
-        }
-
-        if (!domParentFiber) return;
-        
-        const domParent = domParentFiber.dom;
-
-        if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
-            domParent.appendChild(fiber.dom);
-        } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
-            updateDom(fiber.dom, fiber.alternate.props, fiber.props);
-        } else if (fiber.effectTag === "DELETION") {
-            commitDeletion(fiber, domParent);
-        }
-
-        commitWork(fiber.child);
-        commitWork(fiber.sibling);
     }
 
     /**
@@ -371,6 +388,7 @@ var MiniReact = (function () {
             // 修复：安全访问 element.type
             const sameType = oldFiber && element && element.type === oldFiber.type;
 
+            // 新的节点和旧的节点更新前后类型相同，更新属性和内容
             if (sameType) {
                 newFiber = {
                     type: oldFiber.type,
@@ -382,6 +400,7 @@ var MiniReact = (function () {
                 };
             }
 
+            // 新的节点和旧的节点fiber类型不同，是新增的节点，之前不存在对应的旧fiber
             if (element && !sameType) {
                 newFiber = {
                     type: element.type,
@@ -393,6 +412,7 @@ var MiniReact = (function () {
                 };
             }
 
+            // 打上删除的节点标记
             if (oldFiber && !sameType) {
                 oldFiber.effectTag = "DELETION";
                 deletions.push(oldFiber);
@@ -511,10 +531,10 @@ function App() {
 
     MiniReact.useEffect(() => {
         const timer = setTimeout(() => {
-            console.log("useEffect 中的定时器触发");
+            // console.log("useEffect 中的定时器触发");
             setCount((prevCount) => {
                 const newCount = prevCount + 1;
-                console.log("定时器更新 count:", newCount);
+                // console.log("定时器更新 count:", newCount);
                 return newCount;  // 必须返回新值
             });
         }, 1000);
@@ -525,12 +545,12 @@ function App() {
         };
     }, []);
 
-    MiniReact.useEffect(() => {
-        setTimeout(() => {
-            const el = document.getElementById("button");
-            el.textContent = "改成+1"
-        }, 2000)
-    })
+    // MiniReact.useEffect(() => {
+    //     setTimeout(() => {
+    //         const el = document.getElementById("button");
+    //         el.textContent = "改成+1"
+    //     }, 2000)
+    // })
     
     return MiniReact.createElement("div", null,
         MiniReact.createElement("h1", null, "MiniReact 计数器"),
