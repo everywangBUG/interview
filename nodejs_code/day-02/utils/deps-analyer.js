@@ -1,39 +1,54 @@
 const path = require("node:path");
 const fs = require("fs");
 
-function depsAnalyzer(directory = __dirname) {
-  const items = fs.readdirSync(directory);
+async function depsAnalyzer(directory = process.cwd()) {
+  // 读取指定目录中的或者当前目录中的package.json
+  const packageJsonPath = path.join(directory, 'package.json');
 
-  if (!items.includes("package.json")) {
-    throw new Error("当前目录没有package.json，请重新选择目录");
+  try {
+    fs.access(packageContent);
+  } catch (err) {
+    console.error("当前目录没有package.json，请重新选择目录", err);
   }
 
-  const res = {};
-  const dependencies = [];
+  // 读取package.json文件内容
+  const packageContent = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 
-  // 读取指定目录中的或者当前目录中的package.json
-  items.forEach((it) => {
-    if (it === "package.json") {
-      // 列出所有的dependencies和devDependencies
-      const content = fs.readFileSync(`${directory}/package.json`, "utf8");
-      const parsedContent = JSON.parse(content);
-      Object.keys(parsedContent).forEach((val) => {
-        // console.log(parsedContent["dependencies"]);
-        console.log(val);
-        dependencies.push(parsedContent["dependencies"]);
-        res["dependencies"] = dependencies;
-        // res["dependencies"] = parsedContent["dependencies"].sort((con) =>
-        //   con.localeCompare(),
-        // );
-        // const totalLength =
-        //   Object.keys(parsedContent["dependencies"]).length +
-        //   Object.keys(parsedContent["devDependencies"]).length;
-        // res["依赖数量"] = totalLength;
-      });
-    }
-  });
+  const dependencies = packageContent["dependencies"];
+  const devDependencies = packageContent["devDependencies"];
 
-  return res;
+  const sortedByCharDependencies = Object.keys(dependencies).sort((a, b) => a.localeCompare(b));
+  const sortedByCharDevDependencies = Object.keys(devDependencies).sort((a, b) => a.localeCompare(b));
+
+  console.log(sortedByCharDependencies, "排序后的dependencies");
+  console.log(sortedByCharDevDependencies, "排序后的devDependencies");
+
+  // 检查是否有package-lock.json或者pnpm-lock.yaml文件
+  const packageLockPath = path.join(directory, "package-lock.json");
+  const pnpmLockPath = path.join(directory, "pnpm-lock.yaml");
+
+  try {
+    fs.access(packageLockPath);
+  } catch (err) {
+    console.error("该文件中没有package-lock.json");
+  }
+  
+  try {
+    fs.access(pnpmLockPath);
+  } catch (err) {
+    console.error("该文件中没有pnpm-lock.yaml");
+  }
+
+  let count = 0;
+  Object.keys(dependencies).forEach(_ => {
+    count += 1;
+  })
+  Object.keys(devDependencies).forEach(_ => {
+    count += 1;
+  })
+  console.log(`总共有${count}个依赖`);
 }
 
-depsAnalyzer("D:\/web_development\/mini-react");
+// depsAnalyzer("D:\/web_development\/mini-react");
+depsAnalyzer("/Users/gene/Desktop/hy-work/health-hejia");
+
