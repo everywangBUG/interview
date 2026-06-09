@@ -1,5 +1,13 @@
 {
     "name": "nodejs_code",
     "version": "0.0.0",
-    "module": "ESM2015"
+    "module": "cjs",
+    "description": "",
+    "main": "path_fs_os.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
 }
