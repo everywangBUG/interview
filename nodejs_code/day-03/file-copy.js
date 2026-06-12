@@ -36,6 +36,7 @@ async function copyFile(srcPath, destPath) {
 
   // 确保目录存在，mkdir递归创建一个目录
   await fs.mkdir(path.dirname(destPath), { recursive: true });
+  console.log(destPath, "destPath");
 
   // 定义开始复制时间
   const start = Date.now();
@@ -43,6 +44,7 @@ async function copyFile(srcPath, destPath) {
   await fs.copyFile(srcPath, destPath);
   const expend = Date.now() - start;
   // fs.stat获取拷贝文件的大小
+  console.log(destPath, "destPath");
   const size = fs.stat(destPath);
   console.log("文件复制完成");
   console.log(`${srcPath} => ${destPath}`);
@@ -52,7 +54,7 @@ async function copyFile(srcPath, destPath) {
 // 拷贝文件夹
 async function copyDir(srcDir, destDir) {
   if (existsSync(destDir)) {
-    const answer = ask(`目标文件夹${destPath}已存在，是否覆盖(y/n):`);
+    const answer = ask(`目标文件夹${destDir}已存在，是否覆盖(y/n):`);
     if (answer !== "y" || answer !== "yes") {
       console.log("取消");
       return;
@@ -67,7 +69,7 @@ async function copyDir(srcDir, destDir) {
 
   async function walk(src, dest) {
     // 读取src下面的文件夹
-    const entries = await fs.readDir(src, { withFileTypes: true });
+    const entries = await fs.readdir(src, { withFileTypes: true });
 
     // 遍历src文件夹
     for (let entry of entries) {
@@ -80,10 +82,12 @@ async function copyDir(srcDir, destDir) {
       if (entry.isDirectory()) {
         // 如果是文件夹，递归复制文件夹到destPath中
         await fs.mkdir(destPath, { recursive: true });
+        console.log(destPath, "destPath");
         await walk(srcPath, destPath);
       } else {
         // 如果不是文件夹，复制文件到目标路径下
         await fs.copyFile(srcPath, destPath);
+        console.log(destPath, "destPath");
         // 复制文件数+1
         fileCount++;
         process.stdout.write(`\r 已复制${fileCount}文件`);
@@ -92,7 +96,7 @@ async function copyDir(srcDir, destDir) {
   }
 
   await walk(srcDir, destDir);
-  const expend = Data.now() - stat;
+  const expend = Date.now() - stat;
   console.log("目录复制完成");
   console.log(` ${srcDir} => ${destDir}`);
   console.log(` 共${fileCount}个文件 耗时:${expend}ms`);
@@ -103,7 +107,6 @@ try {
   const srcStats = await fs.stat(src);
   // 如果srcStats是文件夹
   if (srcStats.isDirectory()) {
-    console.log(111);
     await copyDir(src, dest);
   } else {
     await copyFile(src, dest);
