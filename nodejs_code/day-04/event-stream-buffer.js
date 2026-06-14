@@ -192,6 +192,7 @@ const addLineNumbers = new Transform({
     this.push(numbered.join("\n"));
     callback();
   },
+  flush(callback) {},
 });
 
 // 组合使用
